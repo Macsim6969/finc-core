@@ -1,0 +1,2065 @@
+# Domain Model
+
+**Version:** 1.0
+**Status:** Draft / Architecture Proposal
+**Project:** FinCore Platform
+
+---
+
+# 1. Purpose
+
+This document defines the main business entities and concepts of the FinCore platform.
+
+The purpose is to establish a shared understanding of:
+
+* what each business entity represents;
+* which Business Domain owns it;
+* what responsibilities it has;
+* what it does not own;
+* how it is created and changed;
+* how it relates to other entities;
+* which entities may become Aggregate Roots;
+* which concepts may become Value Objects;
+* how the model can evolve without creating tight coupling.
+
+This document describes the **business domain model**.
+
+It does not define:
+
+* Angular classes;
+* TypeScript interfaces;
+* database tables;
+* Firebase collections;
+* REST DTOs;
+* UI components.
+
+Those concerns belong to later architectural layers.
+
+---
+
+# 2. Domain Modeling Principles
+
+FinCore follows the following principles.
+
+## 2.1 Business Ownership
+
+Every important business entity must have a clear owner.
+
+```text
+Entity
+   ↓
+Business Domain
+```
+
+An entity should not be owned by multiple domains.
+
+---
+
+## 2.2 No Shared Domain Entities
+
+We should not create a global domain model such as:
+
+```text
+shared/
+    User
+    Company
+    Bank
+    Account
+```
+
+and make every domain use those classes.
+
+This creates tight coupling.
+
+Instead, each Bounded Context owns the model it needs.
+
+For example:
+
+```text
+Banking
+    Customer
+
+Compliance
+    Customer Risk Profile
+
+Fraud
+    Customer Risk
+
+Analytics
+    Customer Analytics View
+```
+
+The same real-world person may appear in multiple contexts, but each context has its own model.
+
+---
+
+# 3. Entity Categories
+
+The domain model contains several types of concepts.
+
+## Entity
+
+An object with a unique identity and lifecycle.
+
+Examples:
+
+```text
+Account
+Company
+Bank
+Card
+Loan
+Payment
+```
+
+---
+
+## Aggregate Root
+
+An entity that controls consistency boundaries inside an Aggregate.
+
+Examples that may become Aggregate Roots:
+
+```text
+Workspace
+Company
+Bank
+Bank Account
+Card
+Payment
+Loan
+Subscription
+```
+
+The final Aggregate boundaries will be defined later.
+
+---
+
+## Value Object
+
+An object defined by its value rather than identity.
+
+Examples:
+
+```text
+Money
+Currency
+Address
+Email
+Phone Number
+Date Range
+Tax Number
+Percentage
+Risk Score
+```
+
+---
+
+## Domain Event
+
+A fact that something important happened.
+
+Examples:
+
+```text
+AccountRegistered
+CompanyCreated
+BankCreated
+PaymentCompleted
+LoanApproved
+KYCCompleted
+```
+
+---
+
+# 4. Identity & Access Domain
+
+---
+
+# 4.1 Account
+
+## Purpose
+
+Represents the digital identity of a person inside FinCore.
+
+Account is **not a bank account**.
+
+It represents the person who can authenticate into the platform.
+
+---
+
+## Business Owner
+
+```text
+Identity & Access
+```
+
+---
+
+## Responsibilities
+
+Account is responsible for:
+
+* identity;
+* authentication state;
+* credentials;
+* security configuration;
+* account status;
+* authentication methods.
+
+Potential information:
+
+```text
+Account Id
+Email
+Phone
+Status
+Authentication Methods
+Created At
+Updated At
+```
+
+---
+
+## Does NOT Own
+
+Account does not own:
+
+* Company;
+* Bank;
+* Workspace;
+* Membership;
+* Bank Account;
+* Card;
+* Payment;
+* Loan;
+* Deposit;
+* Employee information.
+
+---
+
+## Lifecycle
+
+```text
+Register
+    ↓
+Account Created
+    ↓
+Account Active
+    ↓
+Account Suspended
+    ↓
+Account Deactivated
+```
+
+Account should normally be deactivated rather than physically deleted.
+
+---
+
+## Relationships
+
+```text
+Account
+   │
+   ├── Membership *
+   │
+   ├── Session *
+   │
+   └── Authentication Method *
+```
+
+---
+
+# 4.2 Session
+
+## Purpose
+
+Represents an authenticated session of an Account.
+
+## Owner
+
+```text
+Identity & Access
+```
+
+## Responsibilities
+
+* session lifecycle;
+* authentication state;
+* expiration;
+* device/session information;
+* session revocation.
+
+## Does NOT Own
+
+Session does not own:
+
+* permissions;
+* business roles;
+* bank accounts;
+* company membership.
+
+---
+
+# 4.3 Authentication Method
+
+Represents a way in which an Account authenticates.
+
+Examples:
+
+```text
+Password
+Google
+Microsoft
+Apple
+Passkey
+MFA
+```
+
+The domain should support multiple authentication methods for one Account.
+
+---
+
+# 5. Organization Management Domain
+
+---
+
+# 5.1 Workspace
+
+## Purpose
+
+Workspace represents the operational environment in which a user works.
+
+This is one of the most important entities in the platform.
+
+The user does not simply enter "the application".
+
+The user enters a Workspace.
+
+---
+
+## Business Owner
+
+```text
+Organization Management
+```
+
+---
+
+## Responsibilities
+
+Workspace is responsible for:
+
+* workspace identity;
+* workspace type;
+* workspace status;
+* enabled products;
+* workspace configuration;
+* participants;
+* business context.
+
+---
+
+## Workspace Types
+
+Possible types:
+
+```text
+Personal
+Company
+Bank
+Platform
+```
+
+Future types may be added.
+
+---
+
+## Example
+
+```text
+Maxim
+
+Workspace Selection
+
+├── My Factory Ltd
+├── Business Bank
+└── Personal Banking
+```
+
+The same Account can participate in all three.
+
+---
+
+## Does NOT Own
+
+Workspace does not directly own:
+
+* authentication;
+* passwords;
+* banking accounts;
+* transactions;
+* payment execution.
+
+It provides the business context in which those operations happen.
+
+---
+
+## Lifecycle
+
+```text
+Workspace Created
+        ↓
+Workspace Configured
+        ↓
+Workspace Activated
+        ↓
+Workspace Suspended
+        ↓
+Workspace Archived
+```
+
+---
+
+# 5.2 Membership
+
+## Purpose
+
+Membership represents the relationship between an Account and a Workspace.
+
+This is one of the most important concepts in FinCore.
+
+The system should not store relationships such as:
+
+```text
+Account.companyId
+Account.bankId
+Account.role
+```
+
+Instead:
+
+```text
+Account
+    ↓
+Membership
+    ↓
+Workspace
+```
+
+---
+
+## Business Owner
+
+```text
+Organization Management
+```
+
+---
+
+## Responsibilities
+
+Membership controls:
+
+* membership relationship;
+* role;
+* permissions;
+* status;
+* access period;
+* invitation information;
+* membership lifecycle.
+
+---
+
+## Example
+
+```text
+Account: Maxim
+
+Membership
+    Workspace: My Factory Ltd
+    Role: Owner
+
+Membership
+    Workspace: Business Bank
+    Role: Bank Manager
+
+Membership
+    Workspace: Personal Banking
+    Role: Customer
+```
+
+---
+
+## Does NOT Own
+
+Membership does not own:
+
+* Account credentials;
+* Company;
+* Bank;
+* Card;
+* Payment;
+* financial data.
+
+It owns only the relationship.
+
+---
+
+## Lifecycle
+
+```text
+Invitation Sent
+      ↓
+Invitation Accepted
+      ↓
+Membership Created
+      ↓
+Membership Active
+      ↓
+Membership Suspended
+      ↓
+Membership Revoked
+```
+
+Historical Membership records should normally be retained.
+
+---
+
+# 5.3 Company
+
+## Purpose
+
+Represents a legal/business organization using FinCore.
+
+---
+
+## Owner
+
+```text
+Organization Management
+```
+
+---
+
+## Responsibilities
+
+* company identity;
+* company information;
+* organization structure;
+* employees;
+* business configuration;
+* company lifecycle.
+
+---
+
+## Relationships
+
+```text
+Company
+   │
+   ├── Workspace
+   │
+   ├── Membership *
+   │
+   ├── Department *
+   │
+   └── Employee *
+```
+
+---
+
+## Does NOT Own
+
+Company does not directly own:
+
+* authentication;
+* user passwords;
+* bank infrastructure;
+* payment execution logic.
+
+---
+
+# 5.4 Employee
+
+## Purpose
+
+Represents a person working for a Company.
+
+Employee is a business relationship, not an identity.
+
+A person may have:
+
+```text
+Account
+```
+
+and separately:
+
+```text
+Employee
+```
+
+inside a company.
+
+---
+
+## Owner
+
+```text
+Organization Management
+```
+
+---
+
+## Responsibilities
+
+* employment relationship;
+* employment status;
+* department;
+* position;
+* payroll relationship;
+* employee metadata.
+
+---
+
+## Important Distinction
+
+```text
+Account
+    = Who is the person?
+
+Employee
+    = What is the person's relationship with this company?
+```
+
+---
+
+# 5.5 Department
+
+Represents an organizational unit inside a Company.
+
+Examples:
+
+```text
+Engineering
+Accounting
+HR
+Sales
+Management
+```
+
+---
+
+# 5.6 Invitation
+
+Represents an invitation to join a Workspace.
+
+Responsibilities:
+
+* invited Account/email;
+* target Workspace;
+* intended role;
+* invitation status;
+* expiration;
+* inviter.
+
+---
+
+# 6. Banking Domain
+
+---
+
+# 6.1 Bank
+
+## Purpose
+
+Represents a bank operating on the FinCore platform.
+
+This is a key business entity.
+
+---
+
+## Owner
+
+```text
+Banking
+```
+
+---
+
+## Responsibilities
+
+* bank identity;
+* bank configuration;
+* banking products;
+* customers;
+* account services;
+* card services;
+* loan services;
+* deposit services;
+* bank lifecycle.
+
+---
+
+## Important Concept
+
+Two banks can use the same FinCore platform while providing completely different:
+
+* branding;
+* products;
+* fees;
+* limits;
+* workflows;
+* approval processes;
+* customer experiences.
+
+---
+
+## Example
+
+```text
+FinCore Platform
+
+├── Bank A
+│   ├── Premium Cards
+│   ├── Business Loans
+│   └── High-Yield Deposits
+│
+└── Bank B
+    ├── Basic Cards
+    ├── FOP Services
+    └── Payroll
+```
+
+---
+
+# 6.2 Customer
+
+## Purpose
+
+Represents a person or organization receiving services from a Bank.
+
+Customer is a banking concept.
+
+It is not the same thing as Account.
+
+---
+
+## Owner
+
+```text
+Banking
+```
+
+---
+
+## Important Distinction
+
+```text
+Account
+    = Platform identity
+
+Customer
+    = Relationship with a Bank
+```
+
+One Account may become a Customer of multiple Banks.
+
+---
+
+## Example
+
+```text
+Account
+   │
+   ├── Customer → Bank A
+   │
+   ├── Customer → Bank B
+   │
+   └── Customer → Bank C
+```
+
+---
+
+# 6.3 Bank Account
+
+## Purpose
+
+Represents a financial account maintained by a Bank.
+
+---
+
+## Owner
+
+```text
+Banking
+```
+
+---
+
+## Responsibilities
+
+* account number;
+* currency;
+* account status;
+* ownership;
+* account type;
+* balance representation;
+* account lifecycle.
+
+---
+
+## Important Distinction
+
+```text
+Account
+    = Identity
+
+Bank Account
+    = Financial account
+```
+
+These must never be treated as the same entity.
+
+---
+
+# 6.4 Card
+
+## Purpose
+
+Represents a payment card issued by a Bank.
+
+---
+
+## Owner
+
+```text
+Banking
+```
+
+---
+
+## Responsibilities
+
+* card lifecycle;
+* card status;
+* card type;
+* linked Bank Account;
+* limits;
+* activation;
+* freeze/block state.
+
+---
+
+## Lifecycle
+
+```text
+Card Requested
+      ↓
+Card Issued
+      ↓
+Card Activated
+      ↓
+Card Active
+      ↓
+Card Frozen
+      ↓
+Card Unfrozen
+      ↓
+Card Expired / Blocked
+```
+
+---
+
+# 6.5 Deposit
+
+Represents a deposit product opened by a customer.
+
+Responsibilities:
+
+* principal;
+* interest rate;
+* term;
+* maturity;
+* deposit status.
+
+---
+
+# 6.6 Loan
+
+Represents a lending relationship between a Bank and a Customer.
+
+Responsibilities:
+
+* loan amount;
+* interest;
+* term;
+* repayment schedule;
+* loan status;
+* outstanding balance.
+
+Loan does not own the approval workflow.
+
+Workflow & Approvals owns the approval process.
+
+---
+
+# 6.7 Bank Product
+
+Represents a financial product offered by a Bank.
+
+Examples:
+
+```text
+Current Account
+Credit Card
+Debit Card
+Mortgage
+Business Loan
+Deposit
+FOP Account
+```
+
+Each Bank can configure its own product catalog.
+
+---
+
+# 6.8 Tariff
+
+Represents pricing rules associated with a banking product.
+
+Examples:
+
+```text
+Monthly fee
+Transfer fee
+ATM fee
+Card fee
+Loan interest
+Deposit rate
+```
+
+---
+
+# 7. Financial Operations Domain
+
+---
+
+# 7.1 Payment
+
+## Purpose
+
+Represents an instruction to move money.
+
+---
+
+## Owner
+
+```text
+Financial Operations
+```
+
+---
+
+## Responsibilities
+
+* source;
+* destination;
+* amount;
+* currency;
+* payment status;
+* execution lifecycle;
+* payment metadata.
+
+---
+
+## Lifecycle
+
+```text
+Payment Created
+      ↓
+Payment Validated
+      ↓
+Compliance Checked
+      ↓
+Fraud Checked
+      ↓
+Payment Approved
+      ↓
+Payment Executed
+      ↓
+Payment Completed
+```
+
+---
+
+## Does NOT Own
+
+Payment does not own:
+
+* Bank Account;
+* Customer;
+* Fraud rules;
+* KYC rules.
+
+It references those contexts through contracts.
+
+---
+
+# 7.2 Money
+
+Money should be represented as a Value Object.
+
+Example:
+
+```text
+Money
+    amount
+    currency
+```
+
+It should not be represented as:
+
+```text
+number balance
+```
+
+because currency is part of the business meaning.
+
+---
+
+# 7.3 Transaction
+
+Represents a recorded financial movement.
+
+A Transaction is different from a Payment.
+
+```text
+Payment
+    = intention / instruction
+
+Transaction
+    = recorded financial movement
+```
+
+This distinction will become important later.
+
+---
+
+# 8. Business Suite Domain
+
+---
+
+# 8.1 Payroll
+
+Represents a company's salary processing process.
+
+Responsibilities:
+
+* employee salary calculation;
+* payroll period;
+* deductions;
+* approvals;
+* payment generation;
+* payroll status.
+
+---
+
+# 8.2 Payroll Entry
+
+Represents one employee's salary calculation inside a payroll run.
+
+Example:
+
+```text
+Payroll
+   │
+   ├── Employee A
+   ├── Employee B
+   └── Employee C
+```
+
+---
+
+# 8.3 Tax Report
+
+Represents a generated business tax report.
+
+Responsibilities:
+
+* reporting period;
+* tax type;
+* calculated amount;
+* report status;
+* submission status.
+
+---
+
+# 8.4 Business Report
+
+Represents a business-level financial or operational report.
+
+Examples:
+
+```text
+Payroll Report
+Expense Report
+Revenue Report
+Tax Report
+Employee Report
+```
+
+---
+
+# 8.5 FOP
+
+FOP represents the sole-proprietor/business entity used in the platform.
+
+The exact legal model will depend on the target jurisdiction.
+
+The domain should avoid hard-coding country-specific assumptions into generic banking entities.
+
+---
+
+# 9. Compliance & KYC Domain
+
+---
+
+# 9.1 KYC Case
+
+Represents a verification process for a Customer or Organization.
+
+Responsibilities:
+
+* verification status;
+* required documents;
+* verification checks;
+* decision;
+* reviewer;
+* timestamps.
+
+---
+
+# 9.2 Risk Profile
+
+Represents the compliance/risk assessment of a customer.
+
+Responsibilities:
+
+* risk level;
+* risk factors;
+* review status;
+* assessment date;
+* review history.
+
+---
+
+# 9.3 AML Case
+
+Represents an anti-money-laundering investigation or screening result.
+
+---
+
+# 9.4 Sanctions Check
+
+Represents a sanctions screening operation.
+
+---
+
+# 10. Fraud Detection Domain
+
+---
+
+# 10.1 Fraud Case
+
+Represents a suspicious transaction or behavior investigation.
+
+Responsibilities:
+
+* suspicious activity;
+* risk score;
+* rules triggered;
+* investigation state;
+* decision.
+
+---
+
+# 10.2 Fraud Rule
+
+Represents a rule used to detect suspicious activity.
+
+Examples:
+
+```text
+Unusual transaction amount
+Unusual location
+Rapid transfers
+Multiple failed transactions
+Suspicious beneficiary
+```
+
+---
+
+# 10.3 Risk Score
+
+Value Object representing a calculated risk level.
+
+---
+
+# 11. Audit & Risk Domain
+
+---
+
+# 11.1 Audit Record
+
+Represents a historical record of an important action or decision.
+
+Examples:
+
+```text
+Payment Approved
+Loan Approved
+Role Changed
+Card Frozen
+Bank Created
+KYC Approved
+```
+
+Audit records should be append-only.
+
+---
+
+# 11.2 Risk Assessment
+
+Represents an evaluation of operational or business risk.
+
+This is different from a Fraud Risk Score.
+
+Fraud Detection focuses on suspicious behavior.
+
+Audit & Risk focuses on broader risk and traceability.
+
+---
+
+# 12. Workflow & Approvals Domain
+
+---
+
+# 12.1 Approval Request
+
+Represents a request that requires human or policy-based approval.
+
+Examples:
+
+```text
+Loan Approval
+Payment Approval
+Salary Approval
+Bank Configuration Approval
+```
+
+---
+
+# 12.2 Approval Policy
+
+Defines who can approve an operation.
+
+Example:
+
+```text
+Payment < $1,000
+    → Accountant
+
+Payment > $1,000
+    → Manager
+
+Payment > $50,000
+    → Owner
+```
+
+---
+
+# 12.3 Approval Step
+
+Represents one step in a multi-step approval process.
+
+---
+
+# 13. Marketplace Domain
+
+---
+
+# 13.1 Marketplace Product
+
+Represents a product that can be purchased from the FinCore Marketplace.
+
+Examples:
+
+```text
+Business Suite
+Analytics Pro
+Premium Theme
+Payroll Module
+Treasury Module
+```
+
+---
+
+# 13.2 Add-on
+
+Represents optional functionality added to a product.
+
+---
+
+# 13.3 Theme
+
+Represents a purchasable visual theme.
+
+The Theme concept belongs to Marketplace when it is being sold.
+
+The actual active branding configuration belongs to White Label.
+
+This distinction prevents Marketplace from owning presentation configuration.
+
+---
+
+# 14. Billing & Subscription Domain
+
+---
+
+# 14.1 Subscription
+
+Represents a customer's active commercial subscription.
+
+Responsibilities:
+
+* subscribed product;
+* plan;
+* billing cycle;
+* status;
+* renewal;
+* cancellation.
+
+---
+
+# 14.2 Invoice
+
+Represents a billing document.
+
+---
+
+# 14.3 License
+
+Represents authorization to use a purchased product or capability.
+
+Example:
+
+```text
+Business Suite Purchased
+        ↓
+License Activated
+        ↓
+Payroll Enabled
+```
+
+---
+
+# 15. White Label Domain
+
+---
+
+# 15.1 Brand Configuration
+
+Represents the active branding configuration of a Workspace.
+
+Possible configuration:
+
+```text
+Logo
+Primary Color
+Secondary Color
+Typography
+Login Branding
+Navigation Style
+```
+
+---
+
+# 15.2 Theme Configuration
+
+Represents the actual configuration applied to the Workspace.
+
+Marketplace owns the commercial Theme.
+
+White Label owns the applied configuration.
+
+---
+
+# 16. Documents Domain
+
+---
+
+# 16.1 Document
+
+Represents a generated or uploaded business document.
+
+Examples:
+
+```text
+Tax Report
+Salary Report
+Bank Statement
+Contract
+Invoice
+```
+
+---
+
+# 16.2 Document Template
+
+Represents a reusable template used to generate Documents.
+
+---
+
+# 16.3 Document Version
+
+Represents an immutable version of a Document.
+
+This allows historical documents to remain reproducible.
+
+---
+
+# 17. Notifications Domain
+
+---
+
+# 17.1 Notification
+
+Represents a message that should be delivered to a user.
+
+---
+
+# 17.2 Notification Preference
+
+Represents how a user wants to receive notifications.
+
+Examples:
+
+```text
+Email
+Push
+SMS
+In-App
+```
+
+---
+
+# 17.3 Notification Delivery
+
+Represents an attempt to deliver a notification.
+
+---
+
+# 18. Analytics Domain
+
+---
+
+# 18.1 Analytics View
+
+Represents a read-oriented representation of business information.
+
+Analytics Views should not become owners of operational business state.
+
+---
+
+# 18.2 KPI
+
+Represents a measurable business indicator.
+
+Examples:
+
+```text
+Total Balance
+Monthly Revenue
+Payroll Cost
+Transaction Volume
+Active Customers
+```
+
+---
+
+# 19. Treasury Domain
+
+---
+
+# 19.1 Liquidity Position
+
+Represents the current liquidity position of an institution.
+
+---
+
+# 19.2 Reserve
+
+Represents funds allocated as a reserve.
+
+---
+
+# 19.3 Treasury Transfer
+
+Represents an internal movement of funds for treasury purposes.
+
+---
+
+# 20. Support Center Domain
+
+---
+
+# 20.1 Support Ticket
+
+Represents a customer support request.
+
+---
+
+# 20.2 Conversation
+
+Represents communication between a customer and support staff.
+
+---
+
+# 20.3 Support Case
+
+Represents a structured support investigation.
+
+---
+
+# 21. Platform Administration Domain
+
+---
+
+# 21.1 Platform Configuration
+
+Represents configuration of the FinCore platform itself.
+
+---
+
+# 21.2 Feature Flag
+
+Controls availability of functionality.
+
+Example:
+
+```text
+Fraud Detection = enabled
+Treasury = disabled
+AI Assistant = beta
+```
+
+Feature flags are operational controls.
+
+They must not replace business rules.
+
+---
+
+# 21.3 Platform Monitoring Case
+
+Represents a platform-level monitoring or operational issue.
+
+---
+
+# 22. Integration Domain
+
+---
+
+# 22.1 External Provider
+
+Represents an external service integrated with FinCore.
+
+Examples:
+
+```text
+Firebase
+Payment Provider
+KYC Provider
+Email Provider
+Open Banking Provider
+AI Provider
+```
+
+---
+
+# 22.2 Integration Connection
+
+Represents a configured connection between FinCore and an external provider.
+
+---
+
+# 22.3 Webhook
+
+Represents an external event received from another system.
+
+---
+
+# 23. Important Value Objects
+
+The following concepts should normally be modeled as Value Objects rather than Entities.
+
+```text
+Money
+Currency
+Email
+PhoneNumber
+Address
+Percentage
+DateRange
+TaxNumber
+AccountNumber
+CardNumber
+RiskScore
+```
+
+The exact list will be refined during Aggregate design.
+
+---
+
+# 24. Critical Entity Distinctions
+
+These distinctions are mandatory.
+
+## Account vs Bank Account
+
+```text
+Account
+    = Platform identity
+
+Bank Account
+    = Financial account
+```
+
+---
+
+## Account vs Customer
+
+```text
+Account
+    = Person's platform identity
+
+Customer
+    = Person/organization's relationship with a Bank
+```
+
+---
+
+## Account vs Employee
+
+```text
+Account
+    = Person
+
+Employee
+    = Employment relationship
+```
+
+---
+
+## Company vs Workspace
+
+```text
+Company
+    = Business/legal organization
+
+Workspace
+    = Operational environment in FinCore
+```
+
+A Workspace may represent a Company, but they are not conceptually identical.
+
+---
+
+## Payment vs Transaction
+
+```text
+Payment
+    = Instruction to move money
+
+Transaction
+    = Recorded financial movement
+```
+
+---
+
+## Marketplace Product vs License
+
+```text
+Marketplace Product
+    = Something that can be purchased
+
+License
+    = Authorization to use it
+```
+
+---
+
+## Theme vs Brand Configuration
+
+```text
+Theme
+    = Commercial visual product
+
+Brand Configuration
+    = Active configuration applied to a Workspace
+```
+
+---
+
+## Fraud Risk vs Compliance Risk
+
+```text
+Fraud Risk
+    = Suspicious behavior / transaction risk
+
+Compliance Risk
+    = Regulatory / customer verification risk
+```
+
+---
+
+# 25. Initial Aggregate Candidates
+
+These are not finalized yet.
+
+They are candidates for the next DDD stage.
+
+```text
+Workspace
+Company
+Bank
+Bank Account
+Card
+Payment
+Loan
+Deposit
+Payroll
+KYC Case
+Fraud Case
+Subscription
+Approval Request
+Support Ticket
+```
+
+The final Aggregate boundaries will be determined after the Context Map and domain invariants are defined.
+
+---
+
+# 26. Domain Event Candidates
+
+Important events currently identified:
+
+```text
+AccountRegistered
+
+AccountDeactivated
+
+WorkspaceCreated
+
+WorkspaceActivated
+
+MembershipCreated
+
+MembershipRoleChanged
+
+MembershipRevoked
+
+CompanyCreated
+
+EmployeeJoined
+
+BankCreated
+
+BankActivated
+
+BankConnected
+
+CustomerCreated
+
+BankAccountOpened
+
+CardIssued
+
+CardActivated
+
+CardFrozen
+
+PaymentCreated
+
+PaymentApproved
+
+PaymentCompleted
+
+TransactionRecorded
+
+LoanRequested
+
+LoanApproved
+
+LoanIssued
+
+DepositOpened
+
+PayrollCalculated
+
+PayrollApproved
+
+SalaryPaid
+
+TaxReportGenerated
+
+KYCRequested
+
+KYCCompleted
+
+AMLCheckCompleted
+
+FraudDetected
+
+ApprovalRequested
+
+ApprovalCompleted
+
+ProductPurchased
+
+SubscriptionActivated
+
+LicenseActivated
+
+DocumentGenerated
+
+NotificationSent
+```
+
+This list is preliminary and will be refined during Event Storming.
+
+---
+
+# 27. Domain Ownership Matrix
+
+| Entity                   | Owner                   |
+| ------------------------ | ----------------------- |
+| Account                  | Identity & Access       |
+| Session                  | Identity & Access       |
+| Authentication Method    | Identity & Access       |
+| Workspace                | Organization Management |
+| Membership               | Organization Management |
+| Company                  | Organization Management |
+| Employee                 | Organization Management |
+| Department               | Organization Management |
+| Invitation               | Organization Management |
+| Bank                     | Banking                 |
+| Customer                 | Banking                 |
+| Bank Account             | Banking                 |
+| Card                     | Banking                 |
+| Deposit                  | Banking                 |
+| Loan                     | Banking                 |
+| Bank Product             | Banking                 |
+| Tariff                   | Banking                 |
+| Payment                  | Financial Operations    |
+| Transaction              | Financial Operations    |
+| Payroll                  | Business Suite          |
+| Payroll Entry            | Business Suite          |
+| Tax Report               | Business Suite          |
+| Business Report          | Business Suite          |
+| KYC Case                 | Compliance & KYC        |
+| AML Case                 | Compliance & KYC        |
+| Risk Profile             | Compliance & KYC        |
+| Sanctions Check          | Compliance & KYC        |
+| Fraud Case               | Fraud Detection         |
+| Fraud Rule               | Fraud Detection         |
+| Audit Record             | Audit & Risk            |
+| Risk Assessment          | Audit & Risk            |
+| Approval Request         | Workflow & Approvals    |
+| Approval Policy          | Workflow & Approvals    |
+| Marketplace Product      | Marketplace             |
+| Add-on                   | Marketplace             |
+| Theme                    | Marketplace             |
+| Subscription             | Billing & Subscription  |
+| Invoice                  | Billing & Subscription  |
+| License                  | Billing & Subscription  |
+| Brand Configuration      | White Label             |
+| Theme Configuration      | White Label             |
+| Document                 | Documents               |
+| Document Template        | Documents               |
+| Document Version         | Documents               |
+| Notification             | Notifications           |
+| Notification Preference  | Notifications           |
+| Notification Delivery    | Notifications           |
+| Analytics View           | Analytics               |
+| KPI                      | Analytics               |
+| Liquidity Position       | Treasury                |
+| Reserve                  | Treasury                |
+| Treasury Transfer        | Treasury                |
+| Support Ticket           | Support Center          |
+| Conversation             | Support Center          |
+| Platform Configuration   | Platform Administration |
+| Feature Flag             | Platform Administration |
+| Platform Monitoring Case | Platform Administration |
+| External Provider        | Integration             |
+| Integration Connection   | Integration             |
+| Webhook                  | Integration             |
+
+---
+
+# 28. Model Evolution Rules
+
+The domain model must evolve according to the following rules.
+
+## Rule 1
+
+Do not create an entity only because a database table is required.
+
+---
+
+## Rule 2
+
+Do not create a shared domain entity simply to avoid duplication.
+
+---
+
+## Rule 3
+
+A domain owns its business invariants.
+
+---
+
+## Rule 4
+
+An entity should have a clear business responsibility.
+
+---
+
+## Rule 5
+
+If two contexts use the same real-world concept, they may have different domain representations.
+
+---
+
+## Rule 6
+
+New business functionality should first be mapped to an existing Capability.
+
+If no Capability owns it, consider creating a new Capability.
+
+If no existing Bounded Context owns that Capability, consider creating a new Context.
+
+---
+
+# 29. Extensibility Example
+
+Suppose the platform later introduces Insurance.
+
+We should not modify:
+
+```text
+Banking
+Customer
+Loan
+Payment
+```
+
+Instead:
+
+```text
+Insurance Context
+
+Policy
+Coverage
+Premium
+Claim
+Insurance Customer
+```
+
+The new context communicates with existing contexts through explicit contracts.
+
+---
+
+# 30. Final Domain Model Direction
+
+The target architecture is:
+
+```text
+Platform
+    │
+    ├── Products
+    │
+    ├── Business Domains
+    │
+    └── Bounded Contexts
+             │
+             ├── Aggregates
+             │
+             ├── Entities
+             │
+             ├── Value Objects
+             │
+             ├── Domain Services
+             │
+             └── Domain Events
+```
+
+The domain model is intentionally independent from:
+
+```text
+Angular
+Nx
+Firebase
+REST
+HTTP
+UI
+Database
+```
+
+Those are implementation concerns.
+
+---
+
+# 31. Next Step
+
+The next document is:
+
+```text
+docs/02-architecture/ddd/context-map.md
+```
+
+The Context Map will connect the Bounded Contexts defined in:
+
+```text
+docs/02-architecture/ddd/bounded-contexts.md
+```
+
+with the entities and events defined here.
+
+It will answer:
+
+* which context owns which data;
+* which context depends on which;
+* which relationships are upstream/downstream;
+* where Domain Events are required;
+* where synchronous communication is acceptable;
+* where eventual consistency is preferable;
+* where Anti-Corruption Layers are required;
+* where integration contracts should exist.
+
+After Context Map, we will move to:
+
+```text
+Aggregates
+    ↓
+Aggregate Invariants
+    ↓
+Domain Services
+    ↓
+Domain Events
+    ↓
+Application Services
+```
+
+Only after these steps should the domain model be translated into the actual Angular/Nx monorepo architecture.

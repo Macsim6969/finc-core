@@ -1,0 +1,305 @@
+# Workspaces
+
+## Overview
+
+FinCore is a multi-tenant SaaS platform.
+
+Every user has **one Account**.
+
+An Account may belong to one or many **Workspaces**.
+
+A Workspace represents an isolated business context where the user performs a specific role.
+
+The application behavior depends on the selected Workspace.
+
+---
+
+## Workspace Types
+
+```text
+Platform Workspace
+
+Company Workspace
+
+Bank Workspace
+
+Customer Workspace
+```
+
+Each workspace has its own:
+
+- navigation
+- permissions
+- theme
+- enabled modules
+- dashboard
+- business logic
+
+---
+
+## User Account
+
+```text
+Account
+
+↓
+
+Workspace
+
+↓
+
+Role
+
+↓
+
+Permissions
+```
+
+The account is used only for authentication.
+
+Business permissions are determined by the selected Workspace.
+
+---
+
+## Example
+
+```text
+User
+
+Maxim
+
+↓
+
+Workspaces
+
+✓ Personal Banking
+
+✓ My Factory Ltd
+
+✓ Business Bank
+```
+
+---
+
+## Login Flow
+
+```text
+Login
+
+↓
+
+Authenticate
+
+↓
+
+Load User
+
+↓
+
+Load Workspaces
+
+↓
+
+IF only one workspace
+
+↓
+
+Open Workspace
+
+ELSE
+
+↓
+
+Workspace Selection
+```
+
+---
+
+## Workspace Selection
+
+The Workspace selection screen appears:
+
+- after the first login
+- if the user has multiple workspaces
+- when the user explicitly switches workspace
+
+The interface is similar to Netflix profile selection.
+
+Example:
+
+```text
+Choose Workspace
+
+🏢 My Factory Ltd
+
+Company Owner
+
+-------------------
+
+🏦 Business Bank
+
+Bank Manager
+
+-------------------
+
+💳 Personal Banking
+
+Customer
+```
+
+---
+
+## Remember Last Workspace
+
+After selecting a Workspace the platform stores it.
+
+On the next login the application automatically opens the last active Workspace.
+
+The user may switch Workspace at any time.
+
+---
+
+## Workspace Structure
+
+```text
+Workspace
+
+id
+
+type
+
+name
+
+logo
+
+theme
+
+organization
+
+role
+
+permissions
+
+enabledModules
+```
+
+---
+
+## Workspace Types
+
+### Platform Workspace
+
+Roles:
+
+- Platform Owner
+- Platform Admin
+- Platform Support
+- Platform Auditor
+
+---
+
+### Company Workspace
+
+Roles:
+
+- Company Owner
+- Company Admin
+- Company Accountant
+- HR Manager
+- Employee
+- Auditor
+
+---
+
+### Bank Workspace
+
+Roles:
+
+- Bank Owner
+- Bank Manager
+- Bank Employee
+- Loan Manager
+- Card Manager
+- Auditor
+
+---
+
+### Customer Workspace
+
+Roles:
+
+- Customer
+
+---
+
+## Workspace Responsibilities
+
+Platform Workspace
+
+- Platform administration
+- Companies
+- Banks
+- Marketplace
+- Themes
+- Monitoring
+- Audit
+- Subscriptions
+- Feature Flags
+
+---
+
+Company Workspace
+
+- Employees
+- Payroll
+- Accounting
+- Taxes
+- FOP
+- Reports
+- Documents
+- Company Accounts
+
+Company may:
+
+- connect to an existing bank
+- create its own bank
+- purchase Business Suite modules
+
+---
+
+Bank Workspace
+
+- Customers
+- Accounts
+- Cards
+- Loans
+- Deposits
+- Products
+- Employees
+- Analytics
+
+---
+
+Customer Workspace
+
+- Personal Accounts
+- Cards
+- Payments
+- Loans
+- Deposits
+- Taxes
+- Documents
+- Personal Settings
+
+---
+
+## Design Principles
+
+- One Account
+- Multiple Workspaces
+- Workspace defines business context
+- Role exists only inside Workspace
+- Permissions belong to Workspace
+- Navigation belongs to Workspace
+- Theme belongs to Workspace
+- Enabled Modules belong to Workspace

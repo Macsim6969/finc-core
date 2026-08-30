@@ -1,0 +1,733 @@
+# Event Storming - Big Picture
+
+Version: 1.0
+
+---
+
+# Purpose
+
+This document describes the major business events occurring in the FinCore platform.
+
+The purpose is to understand:
+
+- how the business works;
+- where business processes begin and end;
+- how domains communicate;
+- which domains own the data;
+- where future Bounded Contexts should be separated.
+
+This document intentionally ignores technical implementation.
+
+Only business events are described.
+
+---
+
+# Event Storming Legend
+
+🟧 Domain Event
+
+🟦 Command
+
+🟩 Policy / Business Rule
+
+🟪 Read Model
+
+🟥 External System
+
+---
+
+# Business Flows
+
+The platform currently contains the following major business flows.
+
+1. User Onboarding
+
+2. Company Lifecycle
+
+3. Bank Lifecycle
+
+4. Personal Banking
+
+5. Business Operations
+
+6. Payments & Money Transfer
+
+7. Lending
+
+8. Deposits
+
+9. Marketplace
+
+10. Compliance & KYC
+
+11. Audit & Risk
+
+12. Fraud Detection
+
+13. Treasury
+
+14. Support Center
+
+15. Documents
+
+16. Notifications
+
+17. Analytics
+
+---
+
+==================================================
+FLOW 1
+USER ONBOARDING
+==================================================
+
+Goal
+
+A new user enters the platform.
+
+---
+
+Command
+
+Register Account
+
+↓
+
+Event
+
+Account Registered
+
+↓
+
+Policy
+
+Create Personal Workspace
+
+↓
+
+Event
+
+Personal Workspace Created
+
+↓
+
+Policy
+
+Send Welcome Email
+
+↓
+
+Event
+
+Welcome Email Sent
+
+↓
+
+Read Model
+
+User Dashboard Ready
+
+---
+
+Alternative Flow
+
+User registers using Google
+
+↓
+
+Google Authentication Completed
+
+↓
+
+Account Registered
+
+↓
+
+Personal Workspace Created
+
+---
+
+Possible Future Extensions
+
+Microsoft Login
+
+GitHub Login
+
+Apple Login
+
+Corporate SSO
+
+---
+
+Domains
+
+Identity
+
+Workspace
+
+Notifications
+
+---
+
+==================================================
+FLOW 2
+COMPANY LIFECYCLE
+==================================================
+
+Goal
+
+User creates or joins a company.
+
+---
+
+Create Company
+
+↓
+
+Company Created
+
+↓
+
+Company Workspace Created
+
+↓
+
+Company Owner Assigned
+
+↓
+
+Company Activated
+
+---
+
+Invite Employee
+
+↓
+
+Invitation Created
+
+↓
+
+Invitation Accepted
+
+↓
+
+Employee Joined Company
+
+↓
+
+Permissions Assigned
+
+---
+
+Possible Future Extensions
+
+Departments
+
+Teams
+
+Multiple Offices
+
+Holding Companies
+
+---
+
+Domains
+
+Organization Management
+
+Identity
+
+Notifications
+
+---
+
+==================================================
+FLOW 3
+BANK LIFECYCLE
+==================================================
+
+Goal
+
+Company creates its own digital bank.
+
+---
+
+Create Bank
+
+↓
+
+Bank Created
+
+↓
+
+Bank Workspace Created
+
+↓
+
+Bank Activated
+
+↓
+
+Default Products Created
+
+↓
+
+Bank Ready
+
+---
+
+Alternative Flow
+
+Company connects to an existing bank
+
+↓
+
+Bank Connection Requested
+
+↓
+
+Connection Approved
+
+↓
+
+Bank Membership Created
+
+↓
+
+Bank Connected
+
+---
+
+Domains
+
+Banking
+
+Organization
+
+Marketplace
+
+---
+
+==================================================
+FLOW 4
+PERSONAL BANKING
+==================================================
+
+Goal
+
+Customer manages personal finances.
+
+---
+
+Open Account
+
+↓
+
+Account Opened
+
+↓
+
+Debit Card Issued
+
+↓
+
+Card Activated
+
+↓
+
+Customer Starts Using Bank
+
+---
+
+Alternative Events
+
+Card Frozen
+
+Card Unfrozen
+
+Virtual Card Created
+
+Account Closed
+
+Loan Requested
+
+Deposit Opened
+
+---
+
+Domains
+
+Banking
+
+Financial Operations
+
+Documents
+
+Notifications
+
+---
+
+==================================================
+FLOW 5
+BUSINESS OPERATIONS
+==================================================
+
+Goal
+
+Company manages employees and accounting.
+
+---
+
+Employee Created
+
+↓
+
+Payroll Calculated
+
+↓
+
+Payroll Approved
+
+↓
+
+Salary Paid
+
+↓
+
+Tax Report Generated
+
+↓
+
+Taxes Paid
+
+↓
+
+Accounting Closed
+
+---
+
+Domains
+
+Business Suite
+
+Organization
+
+Financial Operations
+
+Documents
+
+Workflow & Approvals
+
+---
+
+==================================================
+FLOW 6
+PAYMENTS
+==================================================
+
+Transfer Created
+
+↓
+
+Payment Validated
+
+↓
+
+Compliance Checked
+
+↓
+
+Fraud Checked
+
+↓
+
+Payment Approved
+
+↓
+
+Money Transferred
+
+↓
+
+Payment Completed
+
+↓
+
+Customer Notified
+
+---
+
+Domains
+
+Financial Operations
+
+Compliance
+
+Fraud Detection
+
+Notifications
+
+---
+
+==================================================
+FLOW 7
+LENDING
+==================================================
+
+Loan Requested
+
+↓
+
+Documents Uploaded
+
+↓
+
+Credit Scoring Completed
+
+↓
+
+Risk Assessment Completed
+
+↓
+
+Loan Approved
+
+↓
+
+Money Issued
+
+↓
+
+Repayment Schedule Created
+
+---
+
+Domains
+
+Banking
+
+Compliance
+
+Audit & Risk
+
+Documents
+
+---
+
+==================================================
+FLOW 8
+MARKETPLACE
+==================================================
+
+Purchase Product
+
+↓
+
+Payment Completed
+
+↓
+
+License Activated
+
+↓
+
+Modules Enabled
+
+↓
+
+Workspace Updated
+
+---
+
+Domains
+
+Marketplace
+
+Billing
+
+Licensing
+
+---
+
+==================================================
+FLOW 9
+COMPLIANCE & KYC
+==================================================
+
+Customer Verification Requested
+
+↓
+
+Identity Verified
+
+↓
+
+AML Check Completed
+
+↓
+
+Sanctions Checked
+
+↓
+
+Risk Profile Calculated
+
+↓
+
+Customer Approved
+
+---
+
+Domains
+
+Compliance & KYC
+
+Audit & Risk
+
+---
+
+==================================================
+FLOW 10
+FRAUD DETECTION
+==================================================
+
+Transaction Created
+
+↓
+
+Fraud Rules Executed
+
+↓
+
+Risk Score Calculated
+
+↓
+
+Suspicious Activity Detected
+
+↓
+
+Manual Review Required
+
+↓
+
+Fraud Confirmed
+
+OR
+
+False Positive
+
+---
+
+Domains
+
+Fraud Detection
+
+Audit
+
+Notifications
+
+---
+
+==================================================
+FLOW 11
+TREASURY
+==================================================
+
+Liquidity Calculated
+
+↓
+
+Cash Position Updated
+
+↓
+
+Reserve Allocated
+
+↓
+
+Internal Transfer Executed
+
+↓
+
+Treasury Report Generated
+
+---
+
+Domains
+
+Treasury
+
+Analytics
+
+---
+
+==================================================
+FLOW 12
+SUPPORT CENTER
+==================================================
+
+Support Ticket Created
+
+↓
+
+Agent Assigned
+
+↓
+
+Customer Contacted
+
+↓
+
+Problem Solved
+
+↓
+
+Ticket Closed
+
+---
+
+Domains
+
+Support Center
+
+Notifications
+
+Audit
+
+---
+
+# Future Business Flows
+
+Insurance
+
+Investments
+
+Crypto
+
+Merchant Acquiring
+
+Open Banking
+
+Government Integrations
+
+AI Financial Advisor
+
+---
+
+# Event Storming Principles
+
+Every business process starts with a Command.
+
+Commands produce Domain Events.
+
+Events trigger Policies.
+
+Policies execute new Commands.
+
+Read Models are updated asynchronously whenever possible.
+
+Business logic belongs inside Business Domains.
+
+Cross-domain communication should happen through events instead of direct dependencies whenever appropriate.
