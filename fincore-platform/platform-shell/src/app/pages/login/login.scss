@@ -20,11 +20,7 @@
   padding: 36px;
 
   background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.04),
-      rgba(255, 255, 255, 0.01)
-    ),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
     var(--surface-glass);
 
   backdrop-filter: blur(var(--blur-lg));
@@ -168,12 +164,7 @@
   font-weight: 600;
   font-size: 15px;
 
-  background:
-    linear-gradient(
-      135deg,
-      var(--accent-primary),
-      var(--accent-secondary)
-    );
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
 
   border: 0;
   border-radius: var(--radius-sm);

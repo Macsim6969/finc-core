@@ -1,0 +1,282 @@
+{
+  "registration": {
+    "title": "Registration",
+    "step": "Step",
+    "select": "Select an option",
+    "createAccount": "Create account",
+
+    "alreadyRegistered": "Already have an account?",
+    "signIn": "Sign in",
+
+    "brand": {
+      "subtitle": "Financial Platform"
+    },
+
+    "sidebar": {
+      "title": "Create your FinCore account",
+      "description": "Set up your account and choose how you want to use the FinCore platform."
+    },
+
+    "steps": {
+      "account": {
+        "title": "Account",
+        "description": "Create your personal FinCore account."
+      },
+
+      "purpose": {
+        "title": "Purpose",
+        "description": "Tell us how you want to use FinCore."
+      },
+
+      "personalInfo": {
+        "title": "Personal information",
+        "description": "Provide some basic personal information."
+      },
+
+      "chooseBanks": {
+        "title": "Choose banks",
+        "description": "Choose the banks you want to connect with."
+      },
+
+      "companyInfo": {
+        "title": "Company information",
+        "description": "Tell us about your company."
+      },
+
+      "companyProfile": {
+        "title": "Company profile",
+        "description": "Provide additional information about your business."
+      },
+
+      "businessNeeds": {
+        "title": "Business needs",
+        "description": "Choose the financial services your company may need."
+      },
+
+      "bankingPreference": {
+        "title": "Banking preference",
+        "description": "Choose how your company wants to work with banks."
+      },
+
+      "bankInfo": {
+        "title": "Bank information",
+        "description": "Provide the basic legal information about your bank."
+      },
+
+      "bankType": {
+        "title": "Bank type",
+        "description": "Choose the type of bank you are creating."
+      },
+
+      "targetCustomers": {
+        "title": "Target customers",
+        "description": "Choose the customer segments your bank will serve."
+      },
+
+      "initialProducts": {
+        "title": "Initial products",
+        "description": "Choose which banking products will be available initially."
+      },
+
+      "branding": {
+        "title": "Branding",
+        "description": "Configure the initial visual identity of your bank."
+      },
+
+      "brokerInfo": {
+        "title": "Broker information",
+        "description": "Provide information about your brokerage organization."
+      },
+
+      "brokerType": {
+        "title": "Broker type",
+        "description": "Choose the type of broker organization."
+      },
+
+      "services": {
+        "title": "Services",
+        "description": "Choose the services your brokerage will provide."
+      },
+
+      "clientTypes": {
+        "title": "Client types",
+        "description": "Choose the types of clients you plan to work with."
+      },
+
+      "initialPartners": {
+        "title": "Initial partners",
+        "description": "Optionally choose banks you want to work with."
+      },
+
+      "review": {
+        "title": "Review",
+        "description": "Review your information before creating the account."
+      }
+    },
+
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone",
+      "password": "Password",
+      "country": "Country",
+      "language": "Language",
+
+      "dateOfBirth": "Date of birth",
+      "citizenship": "Citizenship",
+      "city": "City",
+      "address": "Address",
+
+      "legalName": "Legal name",
+      "tradingName": "Trading name",
+      "registrationNumber": "Registration number",
+      "taxNumber": "Tax number",
+
+      "industry": "Industry",
+      "companySize": "Company size",
+      "website": "Website",
+      "description": "Description",
+
+      "brandName": "Brand name",
+      "licenseNumber": "License number",
+      "headquartersCity": "Headquarters city"
+    },
+
+    "placeholders": {
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name",
+      "citizenship": "Enter your citizenship",
+      "city": "Enter your city",
+      "address": "Enter your address",
+      "companyLegalName": "Enter the legal company name"
+    },
+
+    "purpose": {
+      "personal": {
+        "title": "Personal Banking",
+        "description": "Manage your personal accounts, cards, payments and connected banks."
+      },
+
+      "company": {
+        "title": "Company",
+        "description": "Manage your company, employees, payroll, accounting, taxes and banking."
+      },
+
+      "bank": {
+        "title": "Bank",
+        "description": "Create and configure your own banking organization on FinCore."
+      },
+
+      "broker": {
+        "title": "Broker",
+        "description": "Create a brokerage organization and connect clients with financial products."
+      }
+    },
+
+    "personal": {
+      "bankNote": "Choosing a bank creates a banking relationship. Products and additional services can be configured later."
+    },
+
+    "needs": {
+      "payments": "Payments",
+      "paymentsDescription": "Send and receive business payments.",
+      "payroll": "Payroll",
+      "payrollDescription": "Manage salary payments and payroll runs.",
+      "accounting": "Accounting",
+      "tax": "Tax management",
+      "employeeManagement": "Employee management",
+      "documents": "Documents",
+      "analytics": "Analytics"
+    },
+
+    "companyBanking": {
+      "connectExisting": "Connect existing bank",
+      "connectExistingDescription": "Connect your company to one or more existing banks.",
+
+      "createBank": "Create your own bank",
+      "createBankDescription": "Create a separate banking organization later and connect it with your company.",
+
+      "later": "Decide later",
+      "laterDescription": "Create the company now and configure banking relationships later.",
+
+      "connect-existing": "Connect existing bank",
+      "create-bank": "Create your own bank"
+    },
+
+    "bankTypes": {
+      "retail": "Retail Bank",
+      "retailDescription": "Bank focused primarily on individual customers.",
+
+      "business": "Business Bank",
+      "businessDescription": "Bank focused primarily on companies and entrepreneurs.",
+
+      "digital": "Digital Bank",
+      "digitalDescription": "Digital-first banking without traditional branches.",
+
+      "universal": "Universal Bank",
+      "universalDescription": "Bank providing services to both individuals and businesses.",
+
+      "specialized": "Specialized Bank",
+      "specializedDescription": "Bank focused on a specific market or financial segment."
+    },
+
+    "customerTypes": {
+      "individuals": "Individuals",
+      "companies": "Companies",
+      "entrepreneurs": "Entrepreneurs",
+      "enterprises": "Large enterprises"
+    },
+
+    "bank": {
+      "productsNote": "You can configure additional products and capabilities after the bank has been created."
+    },
+
+    "branding": {
+      "primaryColor": "Primary color",
+      "initialTheme": "Initial theme",
+      "logo": "Logo URL"
+    },
+
+    "brokerTypes": {
+      "loan": "Loan Broker",
+      "mortgage": "Mortgage Broker",
+      "financial": "Financial Broker",
+      "business": "Business Finance Broker",
+      "universal": "Universal Broker"
+    },
+
+    "broker": {
+      "partnersOptional": "Initial partner banks are optional. Partnerships can also be created later from the broker workspace."
+    },
+
+    "review": {
+      "account": "Account",
+      "purpose": "Purpose",
+      "selectedBanks": "Selected banks",
+      "banking": "Banking preference",
+      "companyOwner": "You will become the Owner of the new company.",
+      "bankOwner": "You will become the Owner of the new bank.",
+      "brokerOwner": "You will become the Owner of the new broker organization.",
+      "confirm": "I confirm that the information provided is correct and agree to create this account."
+    }
+  },
+
+  "industries": {
+    "technology": "Technology",
+    "finance": "Finance",
+    "retail": "Retail",
+    "services": "Services"
+  },
+
+  "products": {
+    "accounts": "Bank accounts",
+    "cards": "Cards",
+    "payments": "Payments",
+    "loans": "Loans",
+    "deposits": "Deposits",
+    "mortgages": "Mortgages",
+    "businessFinance": "Business finance",
+    "productComparison": "Product comparison"
+  }
+}

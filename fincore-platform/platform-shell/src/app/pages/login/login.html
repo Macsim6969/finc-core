@@ -1,49 +1,28 @@
-<h1 class="login-title">
-  {{ 'IDENTITY.LOGIN.TITLE' | translate }}
-</h1>
+<h1 class="login-title">{{ 'IDENTITY.LOGIN.TITLE' | translate }}</h1>
 
-<p class="login-description">
-  {{ 'IDENTITY.LOGIN.DESCRIPTION' | translate }}
-</p>
+<p class="login-description">{{ 'IDENTITY.LOGIN.DESCRIPTION' | translate }}</p>
 <div class="login-page">
   <section class="login-card">
     <div class="login-brand">
-      <div class="login-logo">
-        Fin<span>Core</span>
-      </div>
+      <div class="login-logo">Fin<span>Core</span></div>
 
-      <p class="login-subtitle">
-        Smart financial platform
-      </p>
+      <p class="login-subtitle">Smart financial platform</p>
     </div>
 
     <div class="login-content">
-      <h1 class="login-title">
-        Welcome back
-      </h1>
+      <h1 class="login-title">Welcome back</h1>
 
-      <p class="login-description">
-        Sign in to continue to your financial workspace.
-      </p>
+      <p class="login-description">Sign in to continue to your financial workspace.</p>
 
       <form class="login-form">
         <div class="form-field">
-          <label for="email">
-            Email
-          </label>
+          <label for="email"> Email </label>
 
-          <input
-            id="email"
-            type="email"
-            placeholder="name@example.com"
-            autocomplete="email"
-          />
+          <input id="email" type="email" placeholder="name@example.com" autocomplete="email" />
         </div>
 
         <div class="form-field">
-          <label for="password">
-            Password
-          </label>
+          <label for="password"> Password </label>
 
           <input
             id="password"
@@ -59,28 +38,16 @@
             <span>Remember me</span>
           </label>
 
-          <a
-            class="forgot-password"
-            href="#"
-          >
-            Forgot password?
-          </a>
+          <a class="forgot-password" href="#"> Forgot password? </a>
         </div>
 
-        <button
-          class="login-button"
-          type="submit"
-        >
-          Sign in
-        </button>
+        <button class="login-button" type="submit">Sign in</button>
       </form>
 
       <div class="login-footer">
         Don't have an account?
 
-        <a [routerLink]="'/register'">
-          Create account
-        </a>
+        <a [routerLink]="'/register'"> Create account </a>
       </div>
     </div>
   </section>

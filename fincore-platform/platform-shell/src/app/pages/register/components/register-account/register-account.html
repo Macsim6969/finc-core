@@ -1,0 +1,187 @@
+<form class="form" [formGroup]="accountForm">
+  <div class="form-grid">
+    <label class="field">
+      <span class="field__label">
+        {{ 'registration.fields.firstName' | translate }}
+      </span>
+
+      <input
+        class="field__control"
+        formControlName="firstName"
+        [class.field__control--invalid]="
+          accountForm.controls.firstName.touched &&
+          accountForm.controls.firstName.invalid
+        "
+        [placeholder]="'registration.placeholders.firstName' | translate"
+      />
+
+      @if (
+        accountForm.controls.firstName.touched &&
+        accountForm.controls.firstName.hasError('required')
+        ) {
+        <span class="field__error">
+          {{ 'validation.required' | translate }}
+        </span>
+      }
+    </label>
+
+    <label class="field">
+      <span class="field__label">
+        {{ 'registration.fields.lastName' | translate }}
+      </span>
+
+      <input
+        class="field__control"
+        formControlName="lastName"
+        [class.field__control--invalid]="
+          accountForm.controls.lastName.touched &&
+          accountForm.controls.lastName.invalid
+        "
+        [placeholder]="'registration.placeholders.lastName' | translate"
+      />
+
+      @if (
+        accountForm.controls.lastName.touched &&
+        accountForm.controls.lastName.hasError('required')
+        ) {
+        <span class="field__error">
+          {{ 'validation.required' | translate }}
+        </span>
+      }
+    </label>
+
+    <label class="field field--full">
+      <span class="field__label">
+        {{ 'registration.fields.email' | translate }}
+      </span>
+
+      <input
+        class="field__control"
+        type="email"
+        formControlName="email"
+        [class.field__control--invalid]="
+          accountForm.controls.email.touched &&
+          accountForm.controls.email.invalid
+        "
+        placeholder="name@example.com"
+      />
+
+      @if (
+        accountForm.controls.email.touched &&
+        accountForm.controls.email.hasError('required')
+        ) {
+        <span class="field__error">
+          {{ 'validation.required' | translate }}
+        </span>
+      } @else if (
+        accountForm.controls.email.touched &&
+        accountForm.controls.email.hasError('email')
+        ) {
+        <span class="field__error">
+          {{ 'validation.email' | translate }}
+        </span>
+      }
+    </label>
+
+    <label class="field field--full">
+      <span class="field__label">
+        {{ 'registration.fields.phone' | translate }}
+      </span>
+
+      <input
+        class="field__control"
+        type="tel"
+        formControlName="phone"
+        [class.field__control--invalid]="
+          accountForm.controls.phone.touched &&
+          accountForm.controls.phone.invalid
+        "
+        placeholder="+359..."
+      />
+
+      @if (
+        accountForm.controls.phone.touched &&
+        accountForm.controls.phone.hasError('required')
+        ) {
+        <span class="field__error">
+          {{ 'validation.required' | translate }}
+        </span>
+      }
+    </label>
+
+    <label class="field field--full">
+      <span class="field__label">
+        {{ 'registration.fields.password' | translate }}
+      </span>
+
+      <input
+        class="field__control"
+        type="password"
+        formControlName="password"
+        [class.field__control--invalid]="
+          accountForm.controls.password.touched &&
+          accountForm.controls.password.invalid
+        "
+        placeholder="••••••••"
+      />
+
+      @if (
+        accountForm.controls.password.touched &&
+        accountForm.controls.password.hasError('required')
+        ) {
+        <span class="field__error">
+          {{ 'validation.required' | translate }}
+        </span>
+      } @else if (
+        accountForm.controls.password.touched &&
+        accountForm.controls.password.hasError('minlength')
+        ) {
+        <span class="field__error">
+          {{ 'validation.passwordMinLength' | translate }}
+        </span>
+      }
+    </label>
+
+    <div class="field">
+      <span class="field__label">
+        {{ 'registration.fields.country' | translate }}
+      </span>
+
+      <fc-select
+        formControlName="country"
+        [options]="countries"
+        placeholder="registration.select"
+      />
+
+      @if (
+        accountForm.controls.country.touched &&
+        accountForm.controls.country.hasError('required')
+        ) {
+        <span class="field__error">
+          {{ 'validation.required' | translate }}
+        </span>
+      }
+    </div>
+
+    <div class="field">
+      <span class="field__label">
+        {{ 'registration.fields.language' | translate }}
+      </span>
+
+      <fc-select
+        formControlName="language"
+        [options]="languages"
+        placeholder="registration.select"
+      />
+
+      @if (
+        accountForm.controls.language.touched &&
+        accountForm.controls.language.hasError('required')
+        ) {
+        <span class="field__error">
+          {{ 'validation.required' | translate }}
+        </span>
+      }
+    </div>
+  </div>
+</form>

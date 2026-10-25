@@ -1,2497 +1,1070 @@
 <div class="register-page">
   <div class="register-background">
-    <div
-      class="
-        register-background__glow
-        register-background__glow--primary
-      "
-    ></div>
-
-    <div
-      class="
-        register-background__glow
-        register-background__glow--secondary
-      "
-    ></div>
+    <div class="register-background__glow register-background__glow--primary"></div>
+    <div class="register-background__glow register-background__glow--secondary"></div>
   </div>
 
   <div class="register-shell">
-    <app-register-sidebar [purpose]="purpose()"/>
-
-
-    <!-- =====================================================
-         MAIN
-         ===================================================== -->
+    <app-register-sidebar [purpose]="purpose()" [currentStep]="currentStep()" [steps]="steps()" />
 
     <main class="registration-main">
-
-      <!-- MOBILE PROGRESS -->
-
-      <div class="mobile-progress">
-
-        <div class="mobile-progress__header">
-
-          <span>
-            {{ 'registration.step' | translate }}
-            {{ currentStep() + 1 }}
-            /
-            {{ steps().length }}
-          </span>
-
-          <strong>
-            {{ activeStep().title | translate }}
-          </strong>
-
-        </div>
-
-        <div class="mobile-progress__track">
-          <div
-            class="mobile-progress__value"
-            [style.width.%]="
-              ((currentStep() + 1) / steps().length) * 100
-            "
-          ></div>
-        </div>
-
-      </div>
-
-
+      <app-register-mobile-progress
+        [currentStep]="currentStep()"
+        [activeStep]="activeStep()"
+        [steps]="steps()"
+      />
       <!-- ===================================================
            CARD
            =================================================== -->
 
       <section class="registration-card">
-
         <header class="registration-card__header">
-
           <span class="eyebrow">
-            {{ 'registration.step' | translate }}
-            {{ currentStep() + 1 }}
+            {{ 'registration.step' | translate }} {{ currentStep() + 1 }}
           </span>
 
-          <h1>
-            {{ activeStep().title | translate }}
-          </h1>
+          <h1>{{ activeStep().title | translate }}</h1>
 
-          <p>
-            {{ activeStep().description | translate }}
-          </p>
-
+          <p>{{ activeStep().description | translate }}</p>
         </header>
 
-
         <div class="registration-card__body">
-
           @switch (activeStep().id) {
-
-            <!-- =================================================
-                 ACCOUNT
-                 ================================================= -->
-
-            @case ('account') {
-
-              <form
-                class="form"
-                [formGroup]="accountForm"
-              >
-
-                <div class="form-grid">
-
-                  <label class="field">
-
-                    <span>
-                      {{ 'registration.fields.firstName' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="firstName"
-                      [placeholder]="
-                        'registration.placeholders.firstName'
-                          | translate
-                      "
-                    />
-
-                  </label>
-
-
-                  <label class="field">
-
-                    <span>
-                      {{ 'registration.fields.lastName' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="lastName"
-                      [placeholder]="
-                        'registration.placeholders.lastName'
-                          | translate
-                      "
-                    />
-
-                  </label>
-
-
-                  <label class="field field--full">
-
-                    <span>
-                      {{ 'registration.fields.email' | translate }}
-                    </span>
-
-                    <input
-                      type="email"
-                      formControlName="email"
-                      placeholder="name@example.com"
-                    />
-
-                  </label>
-
-
-                  <label class="field field--full">
-
-                    <span>
-                      {{ 'registration.fields.phone' | translate }}
-                    </span>
-
-                    <input
-                      type="tel"
-                      formControlName="phone"
-                      placeholder="+359..."
-                    />
-
-                  </label>
-
-
-                  <label class="field field--full">
-
-                    <span>
-                      {{ 'registration.fields.password' | translate }}
-                    </span>
-
-                    <input
-                      type="password"
-                      formControlName="password"
-                      placeholder="••••••••"
-                    />
-
-                  </label>
-
-
-                  <!-- =========================================
-                       CUSTOM COUNTRY SELECT
-                       ========================================= -->
-
-                  <div class="field">
-
-                    <span>
-                      {{ 'registration.fields.country' | translate }}
-                    </span>
-
-                    <div class="custom-select">
-
-                      <button
-                        type="button"
-                        class="custom-select__trigger"
-                        [class.custom-select__trigger--open]="
-                          openedSelect() === 'country'
-                        "
-                        (click)="toggleSelect('country')"
-                      >
-
-                        <span
-                          [class.custom-select__placeholder]="
-                            !accountForm.controls.country.value
-                          "
-                        >
-
-                          @if (accountForm.controls.country.value) {
-
-                            {{
-                              getOptionLabel(
-                                countries,
-                                accountForm.controls.country.value
-                              ) | translate
-                            }}
-
-                          } @else {
-
-                            {{
-                              'registration.select'
-                                | translate
-                            }}
-
-                          }
-
-                        </span>
-
-                        <span class="custom-select__arrow"></span>
-
-                      </button>
-
-
-                      @if (openedSelect() === 'country') {
-
-                        <div class="custom-select__dropdown">
-
-                          @for (
-                            country of countries;
-                            track country.value
-                            ) {
-
-                            <button
-                              type="button"
-                              class="custom-select__option"
-                              [class.custom-select__option--selected]="
-                                accountForm.controls.country.value
-                                  === country.value
-                              "
-                              (click)="selectCountry(country.value)"
-                            >
-
-                              <span>
-                                {{ country.label | translate }}
-                              </span>
-
-                              @if (
-                                accountForm.controls.country.value
-                                === country.value
-                                ) {
-
-                                <span class="custom-select__check">
-                                  ✓
-                                </span>
-
-                              }
-
-                            </button>
-
-                          }
-
-                        </div>
-
-                      }
-
-                    </div>
-
-                  </div>
-
-
-                  <!-- =========================================
-                       CUSTOM LANGUAGE SELECT
-                       ========================================= -->
-
-                  <div class="field">
-
-                    <span>
-                      {{ 'registration.fields.language' | translate }}
-                    </span>
-
-                    <div class="custom-select">
-
-                      <button
-                        type="button"
-                        class="custom-select__trigger"
-                        [class.custom-select__trigger--open]="
-                          openedSelect() === 'language'
-                        "
-                        (click)="toggleSelect('language')"
-                      >
-
-                        <span>
-                          {{
-                            getOptionLabel(
-                              languages,
-                              accountForm.controls.language.value
-                            ) | translate
-                          }}
-                        </span>
-
-                        <span class="custom-select__arrow"></span>
-
-                      </button>
-
-
-                      @if (openedSelect() === 'language') {
-
-                        <div class="custom-select__dropdown">
-
-                          @for (
-                            language of languages;
-                            track language.value
-                            ) {
-
-                            <button
-                              type="button"
-                              class="custom-select__option"
-                              [class.custom-select__option--selected]="
-                                accountForm.controls.language.value
-                                  === language.value
-                              "
-                              (click)="selectLanguage(language.value)"
-                            >
-
-                              <span>
-                                {{ language.label | translate }}
-                              </span>
-
-                              @if (
-                                accountForm.controls.language.value
-                                === language.value
-                                ) {
-
-                                <span class="custom-select__check">
-                                  ✓
-                                </span>
-
-                              }
-
-                            </button>
-
-                          }
-
-                        </div>
-
-                      }
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
-                 PURPOSE
-                 ================================================= -->
-
-            @case ('purpose') {
-
-              <div class="selection-grid">
-
-                <button
-                  type="button"
-                  class="selection-card"
-                  [class.selection-card--selected]="
+          @case ('account') {
+            <app-register-account />
+          }
+          @case ('purpose') {
+
+          <div class="selection-grid">
+            <button
+              type="button"
+              class="selection-card"
+              [class.selection-card--selected]="
                     purpose() === 'personal'
                   "
-                  (click)="setPurpose('personal')"
-                >
+              (click)="setPurpose('personal')"
+            >
+              <span class="selection-card__icon"> ◉ </span>
 
-                  <span class="selection-card__icon">
-                    ◉
-                  </span>
+              <strong> {{ 'registration.purpose.personal.title' | translate }} </strong>
 
-                  <strong>
-                    {{
-                      'registration.purpose.personal.title'
-                        | translate
-                    }}
-                  </strong>
+              <p>{{ 'registration.purpose.personal.description' | translate }}</p>
+            </button>
 
-                  <p>
-                    {{
-                      'registration.purpose.personal.description'
-                        | translate
-                    }}
-                  </p>
-
-                </button>
-
-
-                <button
-                  type="button"
-                  class="selection-card"
-                  [class.selection-card--selected]="
+            <button
+              type="button"
+              class="selection-card"
+              [class.selection-card--selected]="
                     purpose() === 'company'
                   "
-                  (click)="setPurpose('company')"
-                >
+              (click)="setPurpose('company')"
+            >
+              <span class="selection-card__icon"> ▣ </span>
 
-                  <span class="selection-card__icon">
-                    ▣
-                  </span>
+              <strong> {{ 'registration.purpose.company.title' | translate }} </strong>
 
-                  <strong>
-                    {{
-                      'registration.purpose.company.title'
-                        | translate
-                    }}
-                  </strong>
+              <p>{{ 'registration.purpose.company.description' | translate }}</p>
+            </button>
 
-                  <p>
-                    {{
-                      'registration.purpose.company.description'
-                        | translate
-                    }}
-                  </p>
-
-                </button>
-
-
-                <button
-                  type="button"
-                  class="selection-card"
-                  [class.selection-card--selected]="
+            <button
+              type="button"
+              class="selection-card"
+              [class.selection-card--selected]="
                     purpose() === 'bank'
                   "
-                  (click)="setPurpose('bank')"
-                >
+              (click)="setPurpose('bank')"
+            >
+              <span class="selection-card__icon"> ◆ </span>
 
-                  <span class="selection-card__icon">
-                    ◆
-                  </span>
+              <strong> {{ 'registration.purpose.bank.title' | translate }} </strong>
 
-                  <strong>
-                    {{
-                      'registration.purpose.bank.title'
-                        | translate
-                    }}
-                  </strong>
+              <p>{{ 'registration.purpose.bank.description' | translate }}</p>
+            </button>
 
-                  <p>
-                    {{
-                      'registration.purpose.bank.description'
-                        | translate
-                    }}
-                  </p>
-
-                </button>
-
-
-                <button
-                  type="button"
-                  class="selection-card"
-                  [class.selection-card--selected]="
+            <button
+              type="button"
+              class="selection-card"
+              [class.selection-card--selected]="
                     purpose() === 'broker'
                   "
-                  (click)="setPurpose('broker')"
-                >
+              (click)="setPurpose('broker')"
+            >
+              <span class="selection-card__icon"> ◇ </span>
 
-                  <span class="selection-card__icon">
-                    ◇
-                  </span>
+              <strong> {{ 'registration.purpose.broker.title' | translate }} </strong>
 
-                  <strong>
-                    {{
-                      'registration.purpose.broker.title'
-                        | translate
-                    }}
-                  </strong>
+              <p>{{ 'registration.purpose.broker.description' | translate }}</p>
+            </button>
+          </div>
 
-                  <p>
-                    {{
-                      'registration.purpose.broker.description'
-                        | translate
-                    }}
-                  </p>
+          }
 
-                </button>
-
-              </div>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  PERSONAL INFO
                  ================================================= -->
 
-            @case ('personal-info') {
+          @case ('personal-info') {
 
-              <form
-                class="form"
-                [formGroup]="personalForm"
-              >
+          <form class="form" [formGroup]="personalForm">
+            <div class="form-grid">
+              <!-- CUSTOM DATEPICKER -->
 
-                <div class="form-grid">
+              <div class="field">
+                <span> {{ 'registration.fields.dateOfBirth' | translate }} </span>
 
-                  <!-- CUSTOM DATEPICKER -->
-
-                  <div class="field">
-
-                    <span>
-                      {{
-                        'registration.fields.dateOfBirth'
-                          | translate
-                      }}
+                <div class="datepicker">
+                  <button
+                    type="button"
+                    class="datepicker__trigger"
+                    [class.datepicker__trigger--open]="
+                          openedCalendar()
+                        "
+                    (click)="toggleCalendar()"
+                  >
+                    <span
+                      [class.datepicker__placeholder]="
+                            !personalForm.controls.dateOfBirth.value
+                          "
+                    >
+                      @if ( personalForm.controls.dateOfBirth.value ) { {{ personalForm.controls
+                      .dateOfBirth.value }} } @else { {{ 'calendar.selectDate' | translate }} }
                     </span>
 
-                    <div class="datepicker">
+                    <span class="datepicker__icon"> ◫ </span>
+                  </button>
+
+                  @if (openedCalendar()) {
+
+                  <div class="calendar">
+                    <header class="calendar__header">
+                      <button type="button" class="calendar__navigation" (click)="previousMonth()">
+                        ‹
+                      </button>
+
+                      <strong class="calendar__month">
+                        {{ monthNames[ calendarDate().getMonth() ] | translate }} {{
+                        calendarDate().getFullYear() }}
+                      </strong>
+
+                      <button type="button" class="calendar__navigation" (click)="nextMonth()">
+                        ›
+                      </button>
+                    </header>
+
+                    <div class="calendar__weekdays">
+                      @for ( weekday of weekdays; track weekday ) {
+
+                      <span> {{ weekday | translate }} </span>
+
+                      }
+                    </div>
+
+                    <div class="calendar__days">
+                      @for ( day of calendarDays(); track day.date.getTime() ) {
 
                       <button
                         type="button"
-                        class="datepicker__trigger"
-                        [class.datepicker__trigger--open]="
-                          openedCalendar()
-                        "
-                        (click)="toggleCalendar()"
-                      >
-
-                        <span
-                          [class.datepicker__placeholder]="
-                            !personalForm.controls.dateOfBirth.value
-                          "
-                        >
-
-                          @if (
-                            personalForm.controls.dateOfBirth.value
-                            ) {
-
-                            {{
-                              personalForm.controls
-                                .dateOfBirth.value
-                            }}
-
-                          } @else {
-
-                            {{
-                              'calendar.selectDate'
-                                | translate
-                            }}
-
-                          }
-
-                        </span>
-
-                        <span class="datepicker__icon">
-                          ◫
-                        </span>
-
-                      </button>
-
-
-                      @if (openedCalendar()) {
-
-                        <div class="calendar">
-
-                          <header class="calendar__header">
-
-                            <button
-                              type="button"
-                              class="calendar__navigation"
-                              (click)="previousMonth()"
-                            >
-                              ‹
-                            </button>
-
-
-                            <strong class="calendar__month">
-
-                              {{
-                                monthNames[
-                                  calendarDate().getMonth()
-                                  ] | translate
-                              }}
-
-                              {{ calendarDate().getFullYear() }}
-
-                            </strong>
-
-
-                            <button
-                              type="button"
-                              class="calendar__navigation"
-                              (click)="nextMonth()"
-                            >
-                              ›
-                            </button>
-
-                          </header>
-
-
-                          <div class="calendar__weekdays">
-
-                            @for (
-                              weekday of weekdays;
-                              track weekday
-                              ) {
-
-                              <span>
-                                {{ weekday | translate }}
-                              </span>
-
-                            }
-
-                          </div>
-
-
-                          <div class="calendar__days">
-
-                            @for (
-                              day of calendarDays();
-                              track day.date.getTime()
-                              ) {
-
-                              <button
-                                type="button"
-                                class="calendar__day"
-                                [class.calendar__day--outside]="
+                        class="calendar__day"
+                        [class.calendar__day--outside]="
                                   !day.currentMonth
                                 "
-                                [class.calendar__day--today]="
+                        [class.calendar__day--today]="
                                   day.today
                                 "
-                                [class.calendar__day--selected]="
+                        [class.calendar__day--selected]="
                                   day.selected
                                 "
-                                (click)="
+                        (click)="
                                   selectBirthDate(day.date)
                                 "
-                              >
-                                {{ day.date.getDate() }}
-                              </button>
-
-                            }
-
-                          </div>
-
-                        </div>
+                      >
+                        {{ day.date.getDate() }}
+                      </button>
 
                       }
-
                     </div>
-
                   </div>
 
+                  }
+                </div>
+              </div>
 
-                  <label class="field">
+              <label class="field">
+                <span> {{ 'registration.fields.citizenship' | translate }} </span>
 
-                    <span>
-                      {{
-                        'registration.fields.citizenship'
-                          | translate
-                      }}
-                    </span>
-
-                    <input
-                      formControlName="citizenship"
-                      [placeholder]="
+                <input
+                  formControlName="citizenship"
+                  [placeholder]="
                         'registration.placeholders.citizenship'
                           | translate
                       "
-                    />
+                />
+              </label>
 
-                  </label>
+              <label class="field">
+                <span> {{ 'registration.fields.city' | translate }} </span>
 
-
-                  <label class="field">
-
-                    <span>
-                      {{ 'registration.fields.city' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="city"
-                      [placeholder]="
+                <input
+                  formControlName="city"
+                  [placeholder]="
                         'registration.placeholders.city'
                           | translate
                       "
-                    />
+                />
+              </label>
 
-                  </label>
+              <label class="field">
+                <span> {{ 'registration.fields.address' | translate }} </span>
 
-
-                  <label class="field">
-
-                    <span>
-                      {{ 'registration.fields.address' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="address"
-                      [placeholder]="
+                <input
+                  formControlName="address"
+                  [placeholder]="
                         'registration.placeholders.address'
                           | translate
                       "
-                    />
+                />
+              </label>
+            </div>
+          </form>
 
-                  </label>
+          }
 
-                </div>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  PERSONAL BANKS
                  ================================================= -->
 
-            @case ('personal-banks') {
+          @case ('personal-banks') {
 
-              <div class="bank-list">
+          <div class="bank-list">
+            @for ( bank of availableBanks; track bank.id ) {
 
-                @for (
-                  bank of availableBanks;
-                  track bank.id
-                  ) {
-
-                  <button
-                    type="button"
-                    class="bank-card"
-                    [class.bank-card--selected]="
+            <button
+              type="button"
+              class="bank-card"
+              [class.bank-card--selected]="
                       isBankSelected(
                         personalBanksForm.controls
                           .selectedBanks.value,
                         bank.id
                       )
                     "
-                    (click)="
+              (click)="
                       toggleBank(
                         personalBanksForm.controls
                           .selectedBanks,
                         bank.id
                       )
                     "
-                  >
+            >
+              <div class="bank-card__logo">{{ bank.name.charAt(0) }}</div>
 
-                    <div class="bank-card__logo">
-                      {{ bank.name.charAt(0) }}
-                    </div>
+              <div class="bank-card__content">
+                <strong> {{ bank.name }} </strong>
 
-                    <div class="bank-card__content">
-
-                      <strong>
-                        {{ bank.name }}
-                      </strong>
-
-                      <span>
-                        {{ bank.country }}
-                      </span>
-
-                    </div>
-
-                    <span class="bank-card__checkbox">
-
-                      @if (
-                        isBankSelected(
-                          personalBanksForm.controls
-                            .selectedBanks.value,
-                          bank.id
-                        )
-                        ) {
-                        ✓
-                      }
-
-                    </span>
-
-                  </button>
-
-                }
-
+                <span> {{ bank.country }} </span>
               </div>
 
-              <div class="info-box">
-                {{
-                  'registration.personal.bankNote'
-                    | translate
-                }}
-              </div>
+              <span class="bank-card__checkbox">
+                @if ( isBankSelected( personalBanksForm.controls .selectedBanks.value, bank.id ) ) {
+                ✓ }
+              </span>
+            </button>
 
             }
+          </div>
 
+          <div class="info-box">{{ 'registration.personal.bankNote' | translate }}</div>
 
-            <!-- =================================================
+          }
+
+          <!-- =================================================
                  COMPANY INFO
                  ================================================= -->
 
-            @case ('company-info') {
+          @case ('company-info') {
 
-              <form
-                class="form"
-                [formGroup]="companyInfoForm"
-              >
+          <form class="form" [formGroup]="companyInfoForm">
+            <div class="form-grid">
+              <label class="field field--full">
+                <span> {{ 'registration.fields.legalName' | translate }} </span>
 
-                <div class="form-grid">
-
-                  <label class="field field--full">
-
-                    <span>
-                      {{ 'registration.fields.legalName' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="legalName"
-                      [placeholder]="
+                <input
+                  formControlName="legalName"
+                  [placeholder]="
                         'registration.placeholders.companyLegalName'
                           | translate
                       "
-                    />
+                />
+              </label>
 
-                  </label>
+              <label class="field field--full">
+                <span> {{ 'registration.fields.tradingName' | translate }} </span>
 
+                <input formControlName="tradingName" />
+              </label>
 
-                  <label class="field field--full">
+              <label class="field">
+                <span> {{ 'registration.fields.registrationNumber' | translate }} </span>
 
-                    <span>
-                      {{
-                        'registration.fields.tradingName'
-                          | translate
-                      }}
-                    </span>
+                <input formControlName="registrationNumber" />
+              </label>
 
-                    <input
-                      formControlName="tradingName"
-                    />
+              <label class="field">
+                <span> {{ 'registration.fields.taxNumber' | translate }} </span>
 
-                  </label>
+                <input formControlName="taxNumber" />
+              </label>
 
+              <label class="field field--full">
+                <span> {{ 'registration.fields.country' | translate }} </span>
 
-                  <label class="field">
+                <select formControlName="country">
+                  <option value="">{{ 'registration.select' | translate }}</option>
 
-                    <span>
-                      {{
-                        'registration.fields.registrationNumber'
-                          | translate
-                      }}
-                    </span>
+                  <option value="BG">{{ 'countries.bulgaria' | translate }}</option>
 
-                    <input
-                      formControlName="registrationNumber"
-                    />
+                  <option value="UA">{{ 'countries.ukraine' | translate }}</option>
+                </select>
+              </label>
+            </div>
+          </form>
 
-                  </label>
+          }
 
-
-                  <label class="field">
-
-                    <span>
-                      {{ 'registration.fields.taxNumber' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="taxNumber"
-                    />
-
-                  </label>
-
-
-                  <label class="field field--full">
-
-                    <span>
-                      {{ 'registration.fields.country' | translate }}
-                    </span>
-
-                    <select formControlName="country">
-
-                      <option value="">
-                        {{ 'registration.select' | translate }}
-                      </option>
-
-                      <option value="BG">
-                        {{ 'countries.bulgaria' | translate }}
-                      </option>
-
-                      <option value="UA">
-                        {{ 'countries.ukraine' | translate }}
-                      </option>
-
-                    </select>
-
-                  </label>
-
-                </div>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  COMPANY PROFILE
                  ================================================= -->
 
-            @case ('company-profile') {
+          @case ('company-profile') {
 
-              <form
-                class="form"
-                [formGroup]="companyProfileForm"
-              >
+          <form class="form" [formGroup]="companyProfileForm">
+            <div class="form-grid">
+              <label class="field">
+                <span> {{ 'registration.fields.industry' | translate }} </span>
 
-                <div class="form-grid">
+                <select formControlName="industry">
+                  <option value="">{{ 'registration.select' | translate }}</option>
 
-                  <label class="field">
+                  <option value="technology">{{ 'industries.technology' | translate }}</option>
 
-                    <span>
-                      {{ 'registration.fields.industry' | translate }}
-                    </span>
+                  <option value="finance">{{ 'industries.finance' | translate }}</option>
 
-                    <select formControlName="industry">
+                  <option value="retail">{{ 'industries.retail' | translate }}</option>
 
-                      <option value="">
-                        {{ 'registration.select' | translate }}
-                      </option>
+                  <option value="services">{{ 'industries.services' | translate }}</option>
+                </select>
+              </label>
 
-                      <option value="technology">
-                        {{ 'industries.technology' | translate }}
-                      </option>
+              <label class="field">
+                <span> {{ 'registration.fields.companySize' | translate }} </span>
 
-                      <option value="finance">
-                        {{ 'industries.finance' | translate }}
-                      </option>
+                <select formControlName="companySize">
+                  <option value="">{{ 'registration.select' | translate }}</option>
 
-                      <option value="retail">
-                        {{ 'industries.retail' | translate }}
-                      </option>
+                  <option value="1-10">1–10</option>
 
-                      <option value="services">
-                        {{ 'industries.services' | translate }}
-                      </option>
+                  <option value="11-50">11–50</option>
 
-                    </select>
+                  <option value="51-250">51–250</option>
 
-                  </label>
+                  <option value="250+">250+</option>
+                </select>
+              </label>
 
+              <label class="field field--full">
+                <span> {{ 'registration.fields.website' | translate }} </span>
 
-                  <label class="field">
+                <input formControlName="website" placeholder="https://" />
+              </label>
 
-                    <span>
-                      {{
-                        'registration.fields.companySize'
-                          | translate
-                      }}
-                    </span>
+              <label class="field field--full">
+                <span> {{ 'registration.fields.description' | translate }} </span>
 
-                    <select formControlName="companySize">
+                <textarea rows="5" formControlName="description"></textarea>
+              </label>
+            </div>
+          </form>
 
-                      <option value="">
-                        {{ 'registration.select' | translate }}
-                      </option>
+          }
 
-                      <option value="1-10">
-                        1–10
-                      </option>
-
-                      <option value="11-50">
-                        11–50
-                      </option>
-
-                      <option value="51-250">
-                        51–250
-                      </option>
-
-                      <option value="250+">
-                        250+
-                      </option>
-
-                    </select>
-
-                  </label>
-
-
-                  <label class="field field--full">
-
-                    <span>
-                      {{ 'registration.fields.website' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="website"
-                      placeholder="https://"
-                    />
-
-                  </label>
-
-
-                  <label class="field field--full">
-
-                    <span>
-                      {{
-                        'registration.fields.description'
-                          | translate
-                      }}
-                    </span>
-
-                    <textarea
-                      rows="5"
-                      formControlName="description"
-                    ></textarea>
-
-                  </label>
-
-                </div>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  COMPANY NEEDS
                  ================================================= -->
 
-            @case ('company-needs') {
+          @case ('company-needs') {
 
-              <form
-                class="option-list"
-                [formGroup]="companyNeedsForm"
-              >
+          <form class="option-list" [formGroup]="companyNeedsForm">
+            <label class="check-card">
+              <input type="checkbox" formControlName="payments" />
 
-                <label class="check-card">
+              <div>
+                <strong> {{ 'registration.needs.payments' | translate }} </strong>
 
-                  <input
-                    type="checkbox"
-                    formControlName="payments"
-                  />
+                <span> {{ 'registration.needs.paymentsDescription' | translate }} </span>
+              </div>
+            </label>
 
-                  <div>
+            <label class="check-card">
+              <input type="checkbox" formControlName="payroll" />
 
-                    <strong>
-                      {{ 'registration.needs.payments' | translate }}
-                    </strong>
+              <div>
+                <strong> {{ 'registration.needs.payroll' | translate }} </strong>
 
-                    <span>
-                      {{
-                        'registration.needs.paymentsDescription'
-                          | translate
-                      }}
-                    </span>
+                <span> {{ 'registration.needs.payrollDescription' | translate }} </span>
+              </div>
+            </label>
 
-                  </div>
+            <label class="check-card">
+              <input type="checkbox" formControlName="accounting" />
 
-                </label>
+              <div>
+                <strong> {{ 'registration.needs.accounting' | translate }} </strong>
+              </div>
+            </label>
 
+            <label class="check-card">
+              <input type="checkbox" formControlName="tax" />
 
-                <label class="check-card">
+              <div>
+                <strong> {{ 'registration.needs.tax' | translate }} </strong>
+              </div>
+            </label>
 
-                  <input
-                    type="checkbox"
-                    formControlName="payroll"
-                  />
+            <label class="check-card">
+              <input type="checkbox" formControlName="employeeManagement" />
 
-                  <div>
+              <div>
+                <strong> {{ 'registration.needs.employeeManagement' | translate }} </strong>
+              </div>
+            </label>
 
-                    <strong>
-                      {{ 'registration.needs.payroll' | translate }}
-                    </strong>
+            <label class="check-card">
+              <input type="checkbox" formControlName="documents" />
 
-                    <span>
-                      {{
-                        'registration.needs.payrollDescription'
-                          | translate
-                      }}
-                    </span>
+              <div>
+                <strong> {{ 'registration.needs.documents' | translate }} </strong>
+              </div>
+            </label>
 
-                  </div>
+            <label class="check-card">
+              <input type="checkbox" formControlName="analytics" />
 
-                </label>
+              <div>
+                <strong> {{ 'registration.needs.analytics' | translate }} </strong>
+              </div>
+            </label>
+          </form>
 
+          }
 
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="accounting"
-                  />
-
-                  <div>
-                    <strong>
-                      {{
-                        'registration.needs.accounting'
-                          | translate
-                      }}
-                    </strong>
-                  </div>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="tax"
-                  />
-
-                  <div>
-                    <strong>
-                      {{ 'registration.needs.tax' | translate }}
-                    </strong>
-                  </div>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="employeeManagement"
-                  />
-
-                  <div>
-                    <strong>
-                      {{
-                        'registration.needs.employeeManagement'
-                          | translate
-                      }}
-                    </strong>
-                  </div>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="documents"
-                  />
-
-                  <div>
-                    <strong>
-                      {{
-                        'registration.needs.documents'
-                          | translate
-                      }}
-                    </strong>
-                  </div>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="analytics"
-                  />
-
-                  <div>
-                    <strong>
-                      {{
-                        'registration.needs.analytics'
-                          | translate
-                      }}
-                    </strong>
-                  </div>
-
-                </label>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  COMPANY BANKING
                  ================================================= -->
 
-            @case ('company-banking') {
+          @case ('company-banking') {
 
-              <form
-                class="selection-list"
-                [formGroup]="companyBankingForm"
-              >
+          <form class="selection-list" [formGroup]="companyBankingForm">
+            <label class="radio-card">
+              <input type="radio" value="connect-existing" formControlName="preference" />
 
-                <label class="radio-card">
+              <div>
+                <strong> {{ 'registration.companyBanking.connectExisting' | translate }} </strong>
 
-                  <input
-                    type="radio"
-                    value="connect-existing"
-                    formControlName="preference"
-                  />
+                <p>{{ 'registration.companyBanking.connectExistingDescription' | translate }}</p>
+              </div>
+            </label>
 
-                  <div>
+            <label class="radio-card">
+              <input type="radio" value="create-bank" formControlName="preference" />
 
-                    <strong>
-                      {{
-                        'registration.companyBanking.connectExisting'
-                          | translate
-                      }}
-                    </strong>
+              <div>
+                <strong> {{ 'registration.companyBanking.createBank' | translate }} </strong>
 
-                    <p>
-                      {{
-                        'registration.companyBanking.connectExistingDescription'
-                          | translate
-                      }}
-                    </p>
+                <p>{{ 'registration.companyBanking.createBankDescription' | translate }}</p>
+              </div>
+            </label>
 
-                  </div>
+            <label class="radio-card">
+              <input type="radio" value="later" formControlName="preference" />
 
-                </label>
+              <div>
+                <strong> {{ 'registration.companyBanking.later' | translate }} </strong>
 
+                <p>{{ 'registration.companyBanking.laterDescription' | translate }}</p>
+              </div>
+            </label>
+          </form>
 
-                <label class="radio-card">
+          @if ( companyBankingForm.controls.preference.value === 'connect-existing' ) {
 
-                  <input
-                    type="radio"
-                    value="create-bank"
-                    formControlName="preference"
-                  />
+          <div class="bank-list bank-list--compact">
+            @for ( bank of availableBanks; track bank.id ) {
 
-                  <div>
-
-                    <strong>
-                      {{
-                        'registration.companyBanking.createBank'
-                          | translate
-                      }}
-                    </strong>
-
-                    <p>
-                      {{
-                        'registration.companyBanking.createBankDescription'
-                          | translate
-                      }}
-                    </p>
-
-                  </div>
-
-                </label>
-
-
-                <label class="radio-card">
-
-                  <input
-                    type="radio"
-                    value="later"
-                    formControlName="preference"
-                  />
-
-                  <div>
-
-                    <strong>
-                      {{
-                        'registration.companyBanking.later'
-                          | translate
-                      }}
-                    </strong>
-
-                    <p>
-                      {{
-                        'registration.companyBanking.laterDescription'
-                          | translate
-                      }}
-                    </p>
-
-                  </div>
-
-                </label>
-
-              </form>
-
-
-              @if (
-                companyBankingForm.controls.preference.value
-                === 'connect-existing'
-                ) {
-
-                <div class="bank-list bank-list--compact">
-
-                  @for (
-                    bank of availableBanks;
-                    track bank.id
-                    ) {
-
-                    <button
-                      type="button"
-                      class="bank-card"
-                      [class.bank-card--selected]="
+            <button
+              type="button"
+              class="bank-card"
+              [class.bank-card--selected]="
                         isBankSelected(
                           companyBankingForm.controls
                             .selectedBanks.value,
                           bank.id
                         )
                       "
-                      (click)="
+              (click)="
                         toggleBank(
                           companyBankingForm.controls
                             .selectedBanks,
                           bank.id
                         )
                       "
-                    >
+            >
+              <div class="bank-card__logo">{{ bank.name.charAt(0) }}</div>
 
-                      <div class="bank-card__logo">
-                        {{ bank.name.charAt(0) }}
-                      </div>
+              <div class="bank-card__content">
+                <strong> {{ bank.name }} </strong>
 
-                      <div class="bank-card__content">
-
-                        <strong>
-                          {{ bank.name }}
-                        </strong>
-
-                        <span>
-                          {{ bank.country }}
-                        </span>
-
-                      </div>
-
-                    </button>
-
-                  }
-
-                </div>
-
-              }
+                <span> {{ bank.country }} </span>
+              </div>
+            </button>
 
             }
+          </div>
 
+          } }
 
-            <!-- =================================================
+          <!-- =================================================
                  BANK INFO
                  ================================================= -->
 
-            @case ('bank-info') {
+          @case ('bank-info') {
 
-              <form
-                class="form"
-                [formGroup]="bankInfoForm"
-              >
+          <form class="form" [formGroup]="bankInfoForm">
+            <div class="form-grid">
+              <label class="field field--full">
+                <span> {{ 'registration.fields.legalName' | translate }} </span>
 
-                <div class="form-grid">
+                <input formControlName="legalName" />
+              </label>
 
-                  <label class="field field--full">
+              <label class="field field--full">
+                <span> {{ 'registration.fields.brandName' | translate }} </span>
 
-                    <span>
-                      {{ 'registration.fields.legalName' | translate }}
-                    </span>
+                <input formControlName="brandName" />
+              </label>
 
-                    <input
-                      formControlName="legalName"
-                    />
+              <label class="field">
+                <span> {{ 'registration.fields.registrationNumber' | translate }} </span>
 
-                  </label>
+                <input formControlName="registrationNumber" />
+              </label>
 
+              <label class="field">
+                <span> {{ 'registration.fields.licenseNumber' | translate }} </span>
 
-                  <label class="field field--full">
+                <input formControlName="licenseNumber" />
+              </label>
 
-                    <span>
-                      {{ 'registration.fields.brandName' | translate }}
-                    </span>
+              <label class="field">
+                <span> {{ 'registration.fields.country' | translate }} </span>
 
-                    <input
-                      formControlName="brandName"
-                    />
+                <input formControlName="country" />
+              </label>
 
-                  </label>
+              <label class="field">
+                <span> {{ 'registration.fields.headquartersCity' | translate }} </span>
 
+                <input formControlName="headquartersCity" />
+              </label>
+            </div>
+          </form>
 
-                  <label class="field">
+          }
 
-                    <span>
-                      {{
-                        'registration.fields.registrationNumber'
-                          | translate
-                      }}
-                    </span>
-
-                    <input
-                      formControlName="registrationNumber"
-                    />
-
-                  </label>
-
-
-                  <label class="field">
-
-                    <span>
-                      {{
-                        'registration.fields.licenseNumber'
-                          | translate
-                      }}
-                    </span>
-
-                    <input
-                      formControlName="licenseNumber"
-                    />
-
-                  </label>
-
-
-                  <label class="field">
-
-                    <span>
-                      {{ 'registration.fields.country' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="country"
-                    />
-
-                  </label>
-
-
-                  <label class="field">
-
-                    <span>
-                      {{
-                        'registration.fields.headquartersCity'
-                          | translate
-                      }}
-                    </span>
-
-                    <input
-                      formControlName="headquartersCity"
-                    />
-
-                  </label>
-
-                </div>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  BANK TYPE
                  ================================================= -->
 
-            @case ('bank-type') {
+          @case ('bank-type') {
 
-              <form
-                class="selection-grid"
-                [formGroup]="bankTypeForm"
-              >
+          <form class="selection-grid" [formGroup]="bankTypeForm">
+            @for ( type of [ 'retail', 'business', 'digital', 'universal', 'specialized' ]; track
+            type ) {
 
-                @for (
-                  type of [
-                    'retail',
-                    'business',
-                    'digital',
-                    'universal',
-                    'specialized'
-                  ];
-                  track type
-                  ) {
+            <label class="selection-card">
+              <input
+                class="selection-card__input"
+                type="radio"
+                [value]="type"
+                formControlName="type"
+              />
 
-                  <label class="selection-card">
+              <strong> {{ 'registration.bankTypes.' + type | translate }} </strong>
 
-                    <input
-                      class="selection-card__input"
-                      type="radio"
-                      [value]="type"
-                      formControlName="type"
-                    />
-
-                    <strong>
-                      {{
-                        'registration.bankTypes.' + type
-                          | translate
-                      }}
-                    </strong>
-
-                    <p>
-                      {{
-                        'registration.bankTypes.'
-                        + type
-                        + 'Description'
-                          | translate
-                      }}
-                    </p>
-
-                  </label>
-
-                }
-
-              </form>
+              <p>{{ 'registration.bankTypes.' + type + 'Description' | translate }}</p>
+            </label>
 
             }
+          </form>
 
+          }
 
-            <!-- =================================================
+          <!-- =================================================
                  BANK CUSTOMERS
                  ================================================= -->
 
-            @case ('bank-customers') {
+          @case ('bank-customers') {
 
-              <form
-                class="option-list"
-                [formGroup]="bankCustomersForm"
-              >
+          <form class="option-list" [formGroup]="bankCustomersForm">
+            <label class="check-card">
+              <input type="checkbox" formControlName="individuals" />
 
-                <label class="check-card">
+              <strong> {{ 'registration.customerTypes.individuals' | translate }} </strong>
+            </label>
 
-                  <input
-                    type="checkbox"
-                    formControlName="individuals"
-                  />
+            <label class="check-card">
+              <input type="checkbox" formControlName="companies" />
 
-                  <strong>
-                    {{
-                      'registration.customerTypes.individuals'
-                        | translate
-                    }}
-                  </strong>
+              <strong> {{ 'registration.customerTypes.companies' | translate }} </strong>
+            </label>
 
-                </label>
+            <label class="check-card">
+              <input type="checkbox" formControlName="entrepreneurs" />
 
+              <strong> {{ 'registration.customerTypes.entrepreneurs' | translate }} </strong>
+            </label>
 
-                <label class="check-card">
+            <label class="check-card">
+              <input type="checkbox" formControlName="enterprises" />
 
-                  <input
-                    type="checkbox"
-                    formControlName="companies"
-                  />
+              <strong> {{ 'registration.customerTypes.enterprises' | translate }} </strong>
+            </label>
+          </form>
 
-                  <strong>
-                    {{
-                      'registration.customerTypes.companies'
-                        | translate
-                    }}
-                  </strong>
+          }
 
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="entrepreneurs"
-                  />
-
-                  <strong>
-                    {{
-                      'registration.customerTypes.entrepreneurs'
-                        | translate
-                    }}
-                  </strong>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="enterprises"
-                  />
-
-                  <strong>
-                    {{
-                      'registration.customerTypes.enterprises'
-                        | translate
-                    }}
-                  </strong>
-
-                </label>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  BANK PRODUCTS
                  ================================================= -->
 
-            @case ('bank-products') {
+          @case ('bank-products') {
 
-              <form
-                class="option-list"
-                [formGroup]="bankProductsForm"
-              >
+          <form class="option-list" [formGroup]="bankProductsForm">
+            <label class="check-card">
+              <input type="checkbox" formControlName="accounts" />
 
-                <label class="check-card">
+              <strong> {{ 'products.accounts' | translate }} </strong>
+            </label>
 
-                  <input
-                    type="checkbox"
-                    formControlName="accounts"
-                  />
+            <label class="check-card">
+              <input type="checkbox" formControlName="cards" />
 
-                  <strong>
-                    {{ 'products.accounts' | translate }}
-                  </strong>
+              <strong> {{ 'products.cards' | translate }} </strong>
+            </label>
 
-                </label>
+            <label class="check-card">
+              <input type="checkbox" formControlName="payments" />
 
+              <strong> {{ 'products.payments' | translate }} </strong>
+            </label>
 
-                <label class="check-card">
+            <label class="check-card">
+              <input type="checkbox" formControlName="loans" />
 
-                  <input
-                    type="checkbox"
-                    formControlName="cards"
-                  />
+              <strong> {{ 'products.loans' | translate }} </strong>
+            </label>
 
-                  <strong>
-                    {{ 'products.cards' | translate }}
-                  </strong>
+            <label class="check-card">
+              <input type="checkbox" formControlName="deposits" />
 
-                </label>
+              <strong> {{ 'products.deposits' | translate }} </strong>
+            </label>
+          </form>
 
+          <div class="info-box">{{ 'registration.bank.productsNote' | translate }}</div>
 
-                <label class="check-card">
+          }
 
-                  <input
-                    type="checkbox"
-                    formControlName="payments"
-                  />
-
-                  <strong>
-                    {{ 'products.payments' | translate }}
-                  </strong>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="loans"
-                  />
-
-                  <strong>
-                    {{ 'products.loans' | translate }}
-                  </strong>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="deposits"
-                  />
-
-                  <strong>
-                    {{ 'products.deposits' | translate }}
-                  </strong>
-
-                </label>
-
-              </form>
-
-              <div class="info-box">
-                {{
-                  'registration.bank.productsNote'
-                    | translate
-                }}
-              </div>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  BANK BRANDING
                  ================================================= -->
 
-            @case ('bank-branding') {
+          @case ('bank-branding') {
 
-              <form
-                class="branding-layout"
-                [formGroup]="bankBrandingForm"
-              >
+          <form class="branding-layout" [formGroup]="bankBrandingForm">
+            <div class="branding-form">
+              <label class="field">
+                <span> {{ 'registration.branding.primaryColor' | translate }} </span>
 
-                <div class="branding-form">
+                <input type="color" formControlName="primaryColor" />
+              </label>
 
-                  <label class="field">
+              <label class="field">
+                <span> {{ 'registration.branding.initialTheme' | translate }} </span>
 
-                    <span>
-                      {{
-                        'registration.branding.primaryColor'
-                          | translate
-                      }}
-                    </span>
+                <select formControlName="theme">
+                  <option value="fincore-glass">FinCore Glass</option>
 
-                    <input
-                      type="color"
-                      formControlName="primaryColor"
-                    />
+                  <option value="fincore-dark">FinCore Dark</option>
 
-                  </label>
+                  <option value="minimal">Minimal</option>
+                </select>
+              </label>
 
+              <label class="field">
+                <span> {{ 'registration.branding.logo' | translate }} </span>
 
-                  <label class="field">
+                <input formControlName="logoUrl" placeholder="https://..." />
+              </label>
+            </div>
 
-                    <span>
-                      {{
-                        'registration.branding.initialTheme'
-                          | translate
-                      }}
-                    </span>
-
-                    <select formControlName="theme">
-
-                      <option value="fincore-glass">
-                        FinCore Glass
-                      </option>
-
-                      <option value="fincore-dark">
-                        FinCore Dark
-                      </option>
-
-                      <option value="minimal">
-                        Minimal
-                      </option>
-
-                    </select>
-
-                  </label>
-
-
-                  <label class="field">
-
-                    <span>
-                      {{ 'registration.branding.logo' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="logoUrl"
-                      placeholder="https://..."
-                    />
-
-                  </label>
-
-                </div>
-
-
-                <div
-                  class="theme-preview"
-                  [style.--preview-accent]="
+            <div
+              class="theme-preview"
+              [style.--preview-accent]="
                     bankBrandingForm.controls.primaryColor.value
                   "
-                >
+            >
+              <div class="theme-preview__sidebar">F</div>
 
-                  <div class="theme-preview__sidebar">
-                    F
-                  </div>
+              <div class="theme-preview__content">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </form>
 
-                  <div class="theme-preview__content">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
+          }
 
-                </div>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  BROKER INFO
                  ================================================= -->
 
-            @case ('broker-info') {
+          @case ('broker-info') {
 
-              <form
-                class="form"
-                [formGroup]="brokerInfoForm"
-              >
+          <form class="form" [formGroup]="brokerInfoForm">
+            <div class="form-grid">
+              <label class="field field--full">
+                <span> {{ 'registration.fields.legalName' | translate }} </span>
 
-                <div class="form-grid">
+                <input formControlName="legalName" />
+              </label>
 
-                  <label class="field field--full">
+              <label class="field field--full">
+                <span> {{ 'registration.fields.brandName' | translate }} </span>
 
-                    <span>
-                      {{ 'registration.fields.legalName' | translate }}
-                    </span>
+                <input formControlName="brandName" />
+              </label>
 
-                    <input
-                      formControlName="legalName"
-                    />
+              <label class="field">
+                <span> {{ 'registration.fields.registrationNumber' | translate }} </span>
 
-                  </label>
+                <input formControlName="registrationNumber" />
+              </label>
 
+              <label class="field">
+                <span> {{ 'registration.fields.country' | translate }} </span>
 
-                  <label class="field field--full">
+                <input formControlName="country" />
+              </label>
+            </div>
+          </form>
 
-                    <span>
-                      {{ 'registration.fields.brandName' | translate }}
-                    </span>
+          }
 
-                    <input
-                      formControlName="brandName"
-                    />
-
-                  </label>
-
-
-                  <label class="field">
-
-                    <span>
-                      {{
-                        'registration.fields.registrationNumber'
-                          | translate
-                      }}
-                    </span>
-
-                    <input
-                      formControlName="registrationNumber"
-                    />
-
-                  </label>
-
-
-                  <label class="field">
-
-                    <span>
-                      {{ 'registration.fields.country' | translate }}
-                    </span>
-
-                    <input
-                      formControlName="country"
-                    />
-
-                  </label>
-
-                </div>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  BROKER TYPE
                  ================================================= -->
 
-            @case ('broker-type') {
+          @case ('broker-type') {
 
-              <form
-                class="selection-grid"
-                [formGroup]="brokerTypeForm"
-              >
+          <form class="selection-grid" [formGroup]="brokerTypeForm">
+            @for ( type of [ 'loan', 'mortgage', 'financial', 'business', 'universal' ]; track type
+            ) {
 
-                @for (
-                  type of [
-                    'loan',
-                    'mortgage',
-                    'financial',
-                    'business',
-                    'universal'
-                  ];
-                  track type
-                  ) {
+            <label class="selection-card">
+              <input
+                class="selection-card__input"
+                type="radio"
+                [value]="type"
+                formControlName="type"
+              />
 
-                  <label class="selection-card">
-
-                    <input
-                      class="selection-card__input"
-                      type="radio"
-                      [value]="type"
-                      formControlName="type"
-                    />
-
-                    <strong>
-                      {{
-                        'registration.brokerTypes.' + type
-                          | translate
-                      }}
-                    </strong>
-
-                  </label>
-
-                }
-
-              </form>
+              <strong> {{ 'registration.brokerTypes.' + type | translate }} </strong>
+            </label>
 
             }
+          </form>
 
+          }
 
-            <!-- =================================================
+          <!-- =================================================
                  BROKER SERVICES
                  ================================================= -->
 
-            @case ('broker-services') {
+          @case ('broker-services') {
 
-              <form
-                class="option-list"
-                [formGroup]="brokerServicesForm"
-              >
+          <form class="option-list" [formGroup]="brokerServicesForm">
+            <label class="check-card">
+              <input type="checkbox" formControlName="bankAccounts" />
 
-                <label class="check-card">
+              <strong> {{ 'products.accounts' | translate }} </strong>
+            </label>
 
-                  <input
-                    type="checkbox"
-                    formControlName="bankAccounts"
-                  />
+            <label class="check-card">
+              <input type="checkbox" formControlName="loans" />
 
-                  <strong>
-                    {{ 'products.accounts' | translate }}
-                  </strong>
+              <strong> {{ 'products.loans' | translate }} </strong>
+            </label>
 
-                </label>
+            <label class="check-card">
+              <input type="checkbox" formControlName="mortgages" />
 
+              <strong> {{ 'products.mortgages' | translate }} </strong>
+            </label>
 
-                <label class="check-card">
+            <label class="check-card">
+              <input type="checkbox" formControlName="businessFinance" />
 
-                  <input
-                    type="checkbox"
-                    formControlName="loans"
-                  />
+              <strong> {{ 'products.businessFinance' | translate }} </strong>
+            </label>
 
-                  <strong>
-                    {{ 'products.loans' | translate }}
-                  </strong>
+            <label class="check-card">
+              <input type="checkbox" formControlName="productComparison" />
 
-                </label>
+              <strong> {{ 'products.productComparison' | translate }} </strong>
+            </label>
+          </form>
 
+          }
 
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="mortgages"
-                  />
-
-                  <strong>
-                    {{ 'products.mortgages' | translate }}
-                  </strong>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="businessFinance"
-                  />
-
-                  <strong>
-                    {{
-                      'products.businessFinance'
-                        | translate
-                    }}
-                  </strong>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="productComparison"
-                  />
-
-                  <strong>
-                    {{
-                      'products.productComparison'
-                        | translate
-                    }}
-                  </strong>
-
-                </label>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  BROKER CLIENTS
                  ================================================= -->
 
-            @case ('broker-clients') {
+          @case ('broker-clients') {
 
-              <form
-                class="option-list"
-                [formGroup]="brokerClientsForm"
-              >
+          <form class="option-list" [formGroup]="brokerClientsForm">
+            <label class="check-card">
+              <input type="checkbox" formControlName="individuals" />
 
-                <label class="check-card">
+              <strong> {{ 'registration.customerTypes.individuals' | translate }} </strong>
+            </label>
 
-                  <input
-                    type="checkbox"
-                    formControlName="individuals"
-                  />
+            <label class="check-card">
+              <input type="checkbox" formControlName="companies" />
 
-                  <strong>
-                    {{
-                      'registration.customerTypes.individuals'
-                        | translate
-                    }}
-                  </strong>
+              <strong> {{ 'registration.customerTypes.companies' | translate }} </strong>
+            </label>
 
-                </label>
+            <label class="check-card">
+              <input type="checkbox" formControlName="entrepreneurs" />
 
+              <strong> {{ 'registration.customerTypes.entrepreneurs' | translate }} </strong>
+            </label>
+          </form>
 
-                <label class="check-card">
+          }
 
-                  <input
-                    type="checkbox"
-                    formControlName="companies"
-                  />
-
-                  <strong>
-                    {{
-                      'registration.customerTypes.companies'
-                        | translate
-                    }}
-                  </strong>
-
-                </label>
-
-
-                <label class="check-card">
-
-                  <input
-                    type="checkbox"
-                    formControlName="entrepreneurs"
-                  />
-
-                  <strong>
-                    {{
-                      'registration.customerTypes.entrepreneurs'
-                        | translate
-                    }}
-                  </strong>
-
-                </label>
-
-              </form>
-
-            }
-
-
-            <!-- =================================================
+          <!-- =================================================
                  BROKER PARTNERS
                  ================================================= -->
 
-            @case ('broker-partners') {
+          @case ('broker-partners') {
 
-              <div class="bank-list">
+          <div class="bank-list">
+            @for ( bank of availableBanks; track bank.id ) {
 
-                @for (
-                  bank of availableBanks;
-                  track bank.id
-                  ) {
-
-                  <button
-                    type="button"
-                    class="bank-card"
-                    [class.bank-card--selected]="
+            <button
+              type="button"
+              class="bank-card"
+              [class.bank-card--selected]="
                       isBankSelected(
                         brokerPartnersForm.controls
                           .selectedBanks.value,
                         bank.id
                       )
                     "
-                    (click)="
+              (click)="
                       toggleBank(
                         brokerPartnersForm.controls
                           .selectedBanks,
                         bank.id
                       )
                     "
-                  >
+            >
+              <div class="bank-card__logo">{{ bank.name.charAt(0) }}</div>
 
-                    <div class="bank-card__logo">
-                      {{ bank.name.charAt(0) }}
-                    </div>
+              <div class="bank-card__content">
+                <strong> {{ bank.name }} </strong>
 
-                    <div class="bank-card__content">
-
-                      <strong>
-                        {{ bank.name }}
-                      </strong>
-
-                      <span>
-                        {{ bank.country }}
-                      </span>
-
-                    </div>
-
-                    <span class="bank-card__checkbox">
-
-                      @if (
-                        isBankSelected(
-                          brokerPartnersForm.controls
-                            .selectedBanks.value,
-                          bank.id
-                        )
-                        ) {
-                        ✓
-                      }
-
-                    </span>
-
-                  </button>
-
-                }
-
+                <span> {{ bank.country }} </span>
               </div>
 
-              <div class="info-box">
-                {{
-                  'registration.broker.partnersOptional'
-                    | translate
-                }}
-              </div>
+              <span class="bank-card__checkbox">
+                @if ( isBankSelected( brokerPartnersForm.controls .selectedBanks.value, bank.id ) )
+                { ✓ }
+              </span>
+            </button>
 
             }
+          </div>
 
-
-            <!-- =================================================
-                 REVIEW
-                 ================================================= -->
-
-            @case ('review') {
-
-              <div class="review">
-
-                <section class="review-section">
-
-                  <div class="review-section__header">
-
-                    <div>
-
-                      <span>
-                        {{
-                          'registration.review.account'
-                            | translate
-                        }}
-                      </span>
-
-                      <h3>
-                        {{ accountForm.controls.firstName.value }}
-                        {{ accountForm.controls.lastName.value }}
-                      </h3>
-
-                    </div>
-
-                  </div>
-
-
-                  <div class="review-grid">
-
-                    <div>
-
-                      <small>
-                        {{ 'registration.fields.email' | translate }}
-                      </small>
-
-                      <strong>
-                        {{ accountForm.controls.email.value }}
-                      </strong>
-
-                    </div>
-
-
-                    <div>
-
-                      <small>
-                        {{ 'registration.fields.country' | translate }}
-                      </small>
-
-                      <strong>
-                        {{ accountForm.controls.country.value }}
-                      </strong>
-
-                    </div>
-
-                  </div>
-
-                </section>
-
-
-                <section class="review-section">
-
-                  <small>
-                    {{ 'registration.review.purpose' | translate }}
-                  </small>
-
-                  <h3>
-                    {{
-                      'registration.purpose.'
-                      + purpose()
-                      + '.title'
-                        | translate
-                    }}
-                  </h3>
-
-
-                  @if (purpose() === 'personal') {
-
-                    <div class="review-grid">
-
-                      <div>
-
-                        <small>
-                          {{
-                            'registration.fields.city'
-                              | translate
-                          }}
-                        </small>
-
-                        <strong>
-                          {{ personalForm.controls.city.value }}
-                        </strong>
-
-                      </div>
-
-
-                      <div>
-
-                        <small>
-                          {{
-                            'registration.review.selectedBanks'
-                              | translate
-                          }}
-                        </small>
-
-                        <strong>
-                          {{
-                            personalBanksForm.controls
-                              .selectedBanks.value.length
-                          }}
-                        </strong>
-
-                      </div>
-
-                    </div>
-
-                  }
-
-
-                  @if (purpose() === 'company') {
-
-                    <div class="review-grid">
-
-                      <div>
-
-                        <small>
-                          {{
-                            'registration.fields.legalName'
-                              | translate
-                          }}
-                        </small>
-
-                        <strong>
-                          {{
-                            companyInfoForm.controls
-                              .legalName.value
-                          }}
-                        </strong>
-
-                      </div>
-
-
-                      <div>
-
-                        <small>
-                          {{
-                            'registration.review.banking'
-                              | translate
-                          }}
-                        </small>
-
-                        <strong>
-                          {{
-                            'registration.companyBanking.'
-                            + companyBankingForm.controls
-                              .preference.value
-                              | translate
-                          }}
-                        </strong>
-
-                      </div>
-
-                    </div>
-
-
-                    <div class="info-box">
-                      {{
-                        'registration.review.companyOwner'
-                          | translate
-                      }}
-                    </div>
-
-                  }
-
-
-                  @if (purpose() === 'bank') {
-
-                    <div class="review-grid">
-
-                      <div>
-
-                        <small>
-                          {{
-                            'registration.fields.brandName'
-                              | translate
-                          }}
-                        </small>
-
-                        <strong>
-                          {{
-                            bankInfoForm.controls
-                              .brandName.value
-                          }}
-                        </strong>
-
-                      </div>
-
-
-                      <div>
-
-                        <small>
-                          {{
-                            'registration.steps.bankType.title'
-                              | translate
-                          }}
-                        </small>
-
-                        <strong>
-                          {{
-                            'registration.bankTypes.'
-                            + bankTypeForm.controls.type.value
-                              | translate
-                          }}
-                        </strong>
-
-                      </div>
-
-                    </div>
-
-
-                    <div class="info-box">
-                      {{
-                        'registration.review.bankOwner'
-                          | translate
-                      }}
-                    </div>
-
-                  }
-
-
-                  @if (purpose() === 'broker') {
-
-                    <div class="review-grid">
-
-                      <div>
-
-                        <small>
-                          {{
-                            'registration.fields.brandName'
-                              | translate
-                          }}
-                        </small>
-
-                        <strong>
-                          {{
-                            brokerInfoForm.controls
-                              .brandName.value
-                          }}
-                        </strong>
-
-                      </div>
-
-
-                      <div>
-
-                        <small>
-                          {{
-                            'registration.steps.brokerType.title'
-                              | translate
-                          }}
-                        </small>
-
-                        <strong>
-                          {{
-                            'registration.brokerTypes.'
-                            + brokerTypeForm.controls.type.value
-                              | translate
-                          }}
-                        </strong>
-
-                      </div>
-
-                    </div>
-
-
-                    <div class="info-box">
-                      {{
-                        'registration.review.brokerOwner'
-                          | translate
-                      }}
-                    </div>
-
-                  }
-
-                </section>
-
-
-                <label class="terms">
-
-                  <input type="checkbox" />
-
-                  <span>
-                    {{
-                      'registration.review.confirm'
-                        | translate
-                    }}
-                  </span>
-
-                </label>
-
-              </div>
-
-            }
+          <div class="info-box">{{ 'registration.broker.partnersOptional' | translate }}</div>
 
           }
 
-        </div>
+          <!-- =================================================
+                 REVIEW
+                 ================================================= -->
 
+          @case ('review') {
+
+          <div class="review">
+            <section class="review-section">
+              <div class="review-section__header">
+                <div>
+                  <span> {{ 'registration.review.account' | translate }} </span>
+
+                  <h3>
+                    {{ accountForm.controls.firstName.value }} {{
+                    accountForm.controls.lastName.value }}
+                  </h3>
+                </div>
+              </div>
+
+              <div class="review-grid">
+                <div>
+                  <small> {{ 'registration.fields.email' | translate }} </small>
+
+                  <strong> {{ accountForm.controls.email.value }} </strong>
+                </div>
+
+                <div>
+                  <small> {{ 'registration.fields.country' | translate }} </small>
+
+                  <strong> {{ accountForm.controls.country.value }} </strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="review-section">
+              <small> {{ 'registration.review.purpose' | translate }} </small>
+
+              <h3>{{ 'registration.purpose.' + purpose() + '.title' | translate }}</h3>
+
+              @if (purpose() === 'personal') {
+
+              <div class="review-grid">
+                <div>
+                  <small> {{ 'registration.fields.city' | translate }} </small>
+
+                  <strong> {{ personalForm.controls.city.value }} </strong>
+                </div>
+
+                <div>
+                  <small> {{ 'registration.review.selectedBanks' | translate }} </small>
+
+                  <strong> {{ personalBanksForm.controls .selectedBanks.value.length }} </strong>
+                </div>
+              </div>
+
+              } @if (purpose() === 'company') {
+
+              <div class="review-grid">
+                <div>
+                  <small> {{ 'registration.fields.legalName' | translate }} </small>
+
+                  <strong> {{ companyInfoForm.controls .legalName.value }} </strong>
+                </div>
+
+                <div>
+                  <small> {{ 'registration.review.banking' | translate }} </small>
+
+                  <strong>
+                    {{ 'registration.companyBanking.' + companyBankingForm.controls
+                    .preference.value | translate }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="info-box">{{ 'registration.review.companyOwner' | translate }}</div>
+
+              } @if (purpose() === 'bank') {
+
+              <div class="review-grid">
+                <div>
+                  <small> {{ 'registration.fields.brandName' | translate }} </small>
+
+                  <strong> {{ bankInfoForm.controls .brandName.value }} </strong>
+                </div>
+
+                <div>
+                  <small> {{ 'registration.steps.bankType.title' | translate }} </small>
+
+                  <strong>
+                    {{ 'registration.bankTypes.' + bankTypeForm.controls.type.value | translate }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="info-box">{{ 'registration.review.bankOwner' | translate }}</div>
+
+              } @if (purpose() === 'broker') {
+
+              <div class="review-grid">
+                <div>
+                  <small> {{ 'registration.fields.brandName' | translate }} </small>
+
+                  <strong> {{ brokerInfoForm.controls .brandName.value }} </strong>
+                </div>
+
+                <div>
+                  <small> {{ 'registration.steps.brokerType.title' | translate }} </small>
+
+                  <strong>
+                    {{ 'registration.brokerTypes.' + brokerTypeForm.controls.type.value | translate
+                    }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="info-box">{{ 'registration.review.brokerOwner' | translate }}</div>
+
+              }
+            </section>
+
+            <label class="terms">
+              <input type="checkbox" />
+
+              <span> {{ 'registration.review.confirm' | translate }} </span>
+            </label>
+          </div>
+
+          } }
+        </div>
 
         <!-- ===================================================
              FOOTER
              =================================================== -->
 
         <footer class="registration-card__footer">
-
           <button
             type="button"
             class="button button--secondary"
             [disabled]="currentStep() === 0"
             (click)="previous()"
           >
-            ←
-            {{ 'common.back' | translate }}
+            ← {{ 'common.back' | translate }}
           </button>
 
-
           <div class="registration-card__actions">
-
-            <span class="step-counter">
-              {{ currentStep() + 1 }}
-              /
-              {{ steps().length }}
-            </span>
-
-            <button
-              type="button"
-              class="button button--primary"
-              (click)="next()"
-            >
-
-              @if (isLastStep()) {
-
-                {{
-                  'registration.createAccount'
-                    | translate
-                }}
-
-              } @else {
-
-                {{ 'common.continue' | translate }}
-                →
-
-              }
-
+            <button type="button" class="button button--primary" (click)="next()">
+              @if (isLastStep()) { {{ 'registration.createAccount' | translate }} } @else { {{
+              'common.continue' | translate }} → }
             </button>
-
           </div>
-
         </footer>
-
       </section>
-
     </main>
-
   </div>
 </div>

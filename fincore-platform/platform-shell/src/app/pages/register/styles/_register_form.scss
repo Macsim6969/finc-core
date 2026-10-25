@@ -1,0 +1,141 @@
+:host {
+  .form {
+    width: 100%;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .field--full {
+    grid-column: 1 / -1;
+  }
+
+  .field__label {
+    color: rgba(255, 255, 255, 0.67);
+
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 16px;
+  }
+
+  .field__control,
+  input,
+  select,
+  textarea {
+    width: 100%;
+
+    color: #fff !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    outline: none;
+
+    border-radius: var(--radius-sm);
+
+    background-color: rgba(255, 255, 255, 0.04) !important;
+
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .field__control::placeholder,
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(255, 255, 255, 0.26);
+  }
+
+  .field__control:hover:not(:focus):not(:disabled),
+  input:hover:not(:focus):not(:disabled),
+  select:hover:not(:focus):not(:disabled),
+  textarea:hover:not(:focus):not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.13);
+
+    background-color: rgba(255, 255, 255, 0.052) !important;
+  }
+
+  .field__control:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: rgba(236, 96, 124, 0.5);
+
+    background-color: rgba(255, 255, 255, 0.06) !important;
+
+    box-shadow:
+      0 0 0 4px rgba(202, 63, 92, 0.065),
+      0 8px 24px rgba(0, 0, 0, 0.16);
+  }
+
+  .field__control:disabled,
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  input,
+  select {
+    height: 50px;
+    padding: 0 15px;
+  }
+
+  textarea {
+    min-height: 120px;
+    padding: 14px 15px;
+
+    resize: vertical;
+  }
+
+  // ТЕКСТ ОШИБКИ
+  .field__error {
+    display: block;
+
+    color: #f87171 !important;
+
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 14px;
+  }
+
+  // INVALID INPUT
+  .field__control.field__control--invalid {
+    border-color: #f87171 !important;
+
+    background-color: rgba(248, 113, 113, 0.04) !important;
+  }
+
+  .field__control.field__control--invalid:hover {
+    border-color: #f87171 !important;
+  }
+
+  .field__control.field__control--invalid:focus {
+    border-color: #f87171 !important;
+
+    box-shadow:
+      0 0 0 4px rgba(248, 113, 113, 0.08),
+      0 8px 24px rgba(0, 0, 0, 0.16);
+  }
+
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .field--full {
+      grid-column: auto;
+    }
+  }
+}

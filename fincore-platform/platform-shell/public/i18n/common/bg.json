@@ -1,0 +1,54 @@
+{
+  "common": {
+    "back": "Назад",
+    "continue": "Продължи",
+    "cancel": "Отказ",
+    "save": "Запази",
+    "close": "Затвори",
+    "next": "Напред",
+    "previous": "Назад",
+    "select": "Избери",
+    "loading": "Зареждане..."
+  },
+
+  "countries": {
+    "bulgaria": "България",
+    "ukraine": "Украйна",
+    "germany": "Германия"
+  },
+
+  "languages": {
+    "english": "Английски",
+    "ukrainian": "Украински",
+    "bulgarian": "Български"
+  },
+
+  "calendar": {
+    "selectDate": "Изберете дата",
+
+    "months": {
+      "january": "Януари",
+      "february": "Февруари",
+      "march": "Март",
+      "april": "Април",
+      "may": "Май",
+      "june": "Юни",
+      "july": "Юли",
+      "august": "Август",
+      "september": "Септември",
+      "october": "Октомври",
+      "november": "Ноември",
+      "december": "Декември"
+    },
+
+    "weekdays": {
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб",
+      "sun": "Нд"
+    }
+  }
+}

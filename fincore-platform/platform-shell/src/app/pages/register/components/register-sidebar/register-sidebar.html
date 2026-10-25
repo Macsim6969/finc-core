@@ -1,99 +1,61 @@
 <aside class="registration-sidebar">
-
-  <a
-    class="brand"
-    routerLink="/"
-  >
-    <div class="brand__logo">
-      F
-    </div>
+  <a class="brand" routerLink="/">
+    <div class="brand__logo">F</div>
 
     <div>
-      <div class="brand__name">
-        FinCore
-      </div>
+      <div class="brand__name">FinCore</div>
 
-      <div class="brand__subtitle">
-        {{ 'registration.brand.subtitle' | translate }}
-      </div>
+      <div class="brand__subtitle">{{ 'registration.brand.subtitle' | translate }}</div>
     </div>
   </a>
 
   <header class="sidebar-header">
+    <span class="eyebrow"> {{ 'registration.title' | translate }} </span>
 
-        <span class="eyebrow">
-          {{ 'registration.title' | translate }}
-        </span>
+    <h2>{{ 'registration.sidebar.title' | translate }}</h2>
 
-    <h2>
-      {{ 'registration.sidebar.title' | translate }}
-    </h2>
-
-    <p>
-      {{ 'registration.sidebar.description' | translate }}
-    </p>
-
+    <p>{{ 'registration.sidebar.description' | translate }}</p>
   </header>
 
   <nav class="stepper">
-
-    @for (
-      step of steps();
-      track step.id;
-      let index = $index
-      ) {
-
-      <button
-        type="button"
-        class="step"
-        [class.step--active]="index === currentStep()"
-        [class.step--completed]="index < currentStep()"
-        [class.step--disabled]="index > currentStep()"
-      >
-
+    @for ( step of steps(); track step.id; let index = $index ) {
+    <button
+      type="button"
+      class="step"
+      [class.step--active]="index === currentStep()"
+      [class.step--completed]="index < currentStep()"
+      [class.step--disabled]="index > currentStep()"
+    >
+      <div class="step__rail">
         <div class="step__indicator">
-
           @if (index < currentStep()) {
-            ✓
-          } @else {
-            {{ index + 1 }}
-          }
-
+          <span class="step__check">✓</span>
+          } @else { {{ index + 1 }} }
         </div>
 
         @if (index !== steps().length - 1) {
-          <span class="step__line"></span>
+        <span class="step__line"></span>
         }
+      </div>
 
-        <div class="step__content">
+      <div class="step__content">
+        <div class="step__meta">
+          <small> {{ 'registration.step' | translate }} {{ index + 1 }} </small>
 
-          <small>
-            {{ 'registration.step' | translate }}
-            {{ index + 1 }}
-          </small>
-
-          <strong>
-            {{ step.title | translate }}
-          </strong>
-
+          @if (index < currentStep()) {
+          <span class="step__status"> {{ 'registration.completed' | translate }} </span>
+          }
         </div>
 
-      </button>
-
+        <strong> {{ step.title | translate }} </strong>
+      </div>
+    </button>
     }
-
   </nav>
 
   <div class="sidebar-footer">
+    <span> {{ 'registration.alreadyRegistered' | translate }} </span>
 
-        <span>
-          {{ 'registration.alreadyRegistered' | translate }}
-        </span>
-
-    <a routerLink="/login">
-      {{ 'registration.signIn' | translate }}
-    </a>
-
+    <a routerLink="/login"> {{ 'registration.signIn' | translate }} </a>
   </div>
-
 </aside>

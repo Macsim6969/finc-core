@@ -1,0 +1,54 @@
+{
+  "common": {
+    "back": "Назад",
+    "continue": "Продовжити",
+    "cancel": "Скасувати",
+    "save": "Зберегти",
+    "close": "Закрити",
+    "next": "Далі",
+    "previous": "Назад",
+    "select": "Обрати",
+    "loading": "Завантаження..."
+  },
+
+  "countries": {
+    "bulgaria": "Болгарія",
+    "ukraine": "Україна",
+    "germany": "Німеччина"
+  },
+
+  "languages": {
+    "english": "Англійська",
+    "ukrainian": "Українська",
+    "bulgarian": "Болгарська"
+  },
+
+  "calendar": {
+    "selectDate": "Оберіть дату",
+
+    "months": {
+      "january": "Січень",
+      "february": "Лютий",
+      "march": "Березень",
+      "april": "Квітень",
+      "may": "Травень",
+      "june": "Червень",
+      "july": "Липень",
+      "august": "Серпень",
+      "september": "Вересень",
+      "october": "Жовтень",
+      "november": "Листопад",
+      "december": "Грудень"
+    },
+
+    "weekdays": {
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб",
+      "sun": "Нд"
+    }
+  }
+}

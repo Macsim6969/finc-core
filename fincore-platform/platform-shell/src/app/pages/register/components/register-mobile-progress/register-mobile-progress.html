@@ -1,0 +1,18 @@
+<div class="mobile-progress">
+  <div class="mobile-progress__header">
+    <span>
+      {{ 'registration.step' | translate }} {{ currentStep() + 1 }} / {{ steps().length }}
+    </span>
+
+    <strong> {{ activeStep()?.title | translate }} </strong>
+  </div>
+
+  <div class="mobile-progress__track">
+    <div
+      class="mobile-progress__value"
+      [style.width.%]="
+              ((currentStep() + 1) / steps().length) * 100
+            "
+    ></div>
+  </div>
+</div>

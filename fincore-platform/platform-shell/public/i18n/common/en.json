@@ -1,0 +1,59 @@
+{
+  "common": {
+    "back": "Back",
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "select": "Select",
+    "loading": "Loading..."
+  },
+
+  "countries": {
+    "bulgaria": "Bulgaria",
+    "ukraine": "Ukraine",
+    "germany": "Germany"
+  },
+
+  "languages": {
+    "english": "English",
+    "ukrainian": "Ukrainian",
+    "bulgarian": "Bulgarian"
+  },
+
+  "calendar": {
+    "selectDate": "Select date",
+
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+
+    "weekdays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email address",
+    "passwordMinLength": "Password must contain at least 8 characters"
+  }
+}

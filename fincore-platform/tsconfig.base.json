@@ -14,7 +14,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": false,
-    "paths": {}
+    "paths": {
+      "@fincore-platform/shared-ui": ["./libs/shared/ui/src/index.ts"],
+      "@fincore-platform/admin": ["./libs/admin/feature/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

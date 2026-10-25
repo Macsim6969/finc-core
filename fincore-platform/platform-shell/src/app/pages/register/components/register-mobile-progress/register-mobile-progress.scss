@@ -1,0 +1,59 @@
+:host {
+  .mobile-progress {
+    display: none;
+    @media (max-width: 820px) {
+      display: block;
+
+      margin-bottom: 14px;
+      padding: 15px 16px;
+
+      border: 1px solid var(--border);
+      border-radius: 18px;
+
+      background: var(--surface);
+
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+
+      &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 12px;
+
+        margin-bottom: 10px;
+
+        span {
+          color: var(--text-secondary);
+
+          font-size: 10px;
+        }
+
+        strong {
+          font-size: 11px;
+        }
+      }
+
+      &__track {
+        height: 4px;
+
+        overflow: hidden;
+
+        border-radius: 999px;
+
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      &__value {
+        height: 100%;
+
+        border-radius: inherit;
+
+        background: var(--accent);
+
+        transition: width 220ms ease;
+      }
+    }
+  }
+}

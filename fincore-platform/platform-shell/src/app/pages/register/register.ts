@@ -4,27 +4,19 @@ import {
   Component,
   computed,
   signal,
+  inject,
+  Signal,
 } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import {TranslatePipe} from "@ngx-translate/core";
-import {RegisterSidebar} from "./components/register-sidebar/register-sidebar";
-
-type RegistrationPurpose =
-  | 'personal'
-  | 'company'
-  | 'bank'
-  | 'broker';
-
-interface RegistrationStep {
-  id: string;
-  title: string;
-  description: string;
-}
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { RegisterSidebar } from './components/register-sidebar/register-sidebar';
+import { RegisterStateService } from './services/register/register-state.service';
+import { RegistrationPurpose } from './types/register.type';
+import { RegisterBusinessService } from './services/register/register-business.service';
+import { RegistrationStep } from './interfaces/register.interface';
+import { RegisterMobileProgress } from './components/register-mobile-progress/register-mobile-progress';
+import {RegisterAccount} from "./components/register-account/register-account";
+import {StepperStateService} from "./services/stepper/stepper-state.service";
 
 @Component({
   selector: 'app-register',
@@ -32,19 +24,29 @@ interface RegistrationStep {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     TranslatePipe,
-    RegisterSidebar
+    RegisterSidebar,
+    RegisterMobileProgress,
+    RegisterAccount,
   ],
+  providers: [RegisterStateService, RegisterBusinessService, StepperStateService],
   templateUrl: './register.html',
-  styleUrl: './register.scss',
+  styleUrls: ['./register.scss', './styles/_register_form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Register {
+  private readonly registerState = inject(RegisterStateService);
+  private readonly registerBusiness = inject(RegisterBusinessService);
+  private readonly stepperStateService = inject(StepperStateService);
+
+  readonly currentStep: Signal<number> = this.registerState.currentStep;
+  readonly purpose: Signal<RegistrationPurpose> = this.registerState.purpose;
+  readonly isLastStep: Signal<boolean> = this.registerState.isLastStep;
+  readonly activeStep: Signal<RegistrationStep> = this.registerState.activeStep;
+  readonly steps: Signal<RegistrationStep[]> = this.registerState.steps;
+
   private readonly fb = new FormBuilder();
 
-  readonly purpose = signal<RegistrationPurpose | null>(null);
-  readonly currentStep = signal(0);
   readonly openedSelect = signal<string | null>(null);
 
   readonly openedCalendar = signal(false);
@@ -120,9 +122,7 @@ export class Register {
   });
 
   toggleSelect(name: string): void {
-    this.openedSelect.update(value =>
-      value === name ? null : name,
-    );
+    this.openedSelect.update(value => (value === name ? null : name));
 
     this.openedCalendar.set(false);
   }
@@ -137,10 +137,7 @@ export class Register {
     this.openedSelect.set(null);
   }
 
-  getOptionLabel(
-    options: { value: string; label: string }[],
-    value: string,
-  ): string {
+  getOptionLabel(options: { value: string; label: string }[], value: string): string {
     return options.find(option => option.value === value)?.label ?? '';
   }
 
@@ -152,25 +149,19 @@ export class Register {
   previousMonth(): void {
     const date = this.calendarDate();
 
-    this.calendarDate.set(
-      new Date(date.getFullYear(), date.getMonth() - 1, 1),
-    );
+    this.calendarDate.set(new Date(date.getFullYear(), date.getMonth() - 1, 1));
   }
 
   nextMonth(): void {
     const date = this.calendarDate();
 
-    this.calendarDate.set(
-      new Date(date.getFullYear(), date.getMonth() + 1, 1),
-    );
+    this.calendarDate.set(new Date(date.getFullYear(), date.getMonth() + 1, 1));
   }
 
   selectBirthDate(date: Date): void {
     this.selectedBirthDate.set(date);
 
-    this.personalForm.controls.dateOfBirth.setValue(
-      this.formatDate(date),
-    );
+    this.personalForm.controls.dateOfBirth.setValue(this.formatDate(date));
 
     this.openedCalendar.set(false);
   }
@@ -185,9 +176,9 @@ export class Register {
 
   private isSameDate(a: Date, b: Date): boolean {
     return (
-      a.getFullYear() === b.getFullYear()
-      && a.getMonth() === b.getMonth()
-      && a.getDate() === b.getDate()
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate()
     );
   }
   readonly accountForm = this.fb.nonNullable.group({
@@ -238,10 +229,7 @@ export class Register {
 
   readonly companyBankingForm = this.fb.nonNullable.group({
     preference: [
-      'connect-existing' as
-        | 'connect-existing'
-        | 'create-bank'
-        | 'later',
+      'connect-existing' as 'connect-existing' | 'create-bank' | 'later',
       Validators.required,
     ],
     selectedBanks: this.fb.nonNullable.control<string[]>([]),
@@ -258,13 +246,7 @@ export class Register {
 
   readonly bankTypeForm = this.fb.nonNullable.group({
     type: [
-      '' as
-        | ''
-        | 'retail'
-        | 'business'
-        | 'digital'
-        | 'universal'
-        | 'specialized',
+      '' as '' | 'retail' | 'business' | 'digital' | 'universal' | 'specialized',
       Validators.required,
     ],
   });
@@ -299,13 +281,7 @@ export class Register {
 
   readonly brokerTypeForm = this.fb.nonNullable.group({
     type: [
-      '' as
-        | ''
-        | 'loan'
-        | 'mortgage'
-        | 'financial'
-        | 'business'
-        | 'universal',
+      '' as '' | 'loan' | 'mortgage' | 'financial' | 'business' | 'universal',
       Validators.required,
     ],
   });
@@ -346,140 +322,8 @@ export class Register {
     },
   ];
 
-  readonly steps = computed<RegistrationStep[]>(() => {
-    const common: RegistrationStep[] = [
-      {
-        id: 'account',
-        title: 'registration.steps.account.title',
-        description: 'registration.steps.account.description',
-      },
-      {
-        id: 'purpose',
-        title: 'registration.steps.purpose.title',
-        description: 'registration.steps.purpose.description',
-      },
-    ];
-
-    switch (this.purpose()) {
-      case 'personal':
-        return [
-          ...common,
-          {
-            id: 'personal-info',
-            title: 'registration.steps.personalInfo.title',
-            description: 'registration.steps.personalInfo.description',
-          },
-          {
-            id: 'personal-banks',
-            title: 'registration.steps.chooseBanks.title',
-            description: 'registration.steps.chooseBanks.description',
-          },
-          this.reviewStep(),
-        ];
-
-      case 'company':
-        return [
-          ...common,
-          {
-            id: 'company-info',
-            title: 'registration.steps.companyInfo.title',
-            description: 'registration.steps.companyInfo.description',
-          },
-          {
-            id: 'company-profile',
-            title: 'registration.steps.companyProfile.title',
-            description: 'registration.steps.companyProfile.description',
-          },
-          {
-            id: 'company-needs',
-            title: 'registration.steps.businessNeeds.title',
-            description: 'registration.steps.businessNeeds.description',
-          },
-          {
-            id: 'company-banking',
-            title: 'registration.steps.bankingPreference.title',
-            description: 'registration.steps.bankingPreference.description',
-          },
-          this.reviewStep(),
-        ];
-
-      case 'bank':
-        return [
-          ...common,
-          {
-            id: 'bank-info',
-            title: 'registration.steps.bankInfo.title',
-            description: 'registration.steps.bankInfo.description',
-          },
-          {
-            id: 'bank-type',
-            title: 'registration.steps.bankType.title',
-            description: 'registration.steps.bankType.description',
-          },
-          {
-            id: 'bank-customers',
-            title: 'registration.steps.targetCustomers.title',
-            description: 'registration.steps.targetCustomers.description',
-          },
-          {
-            id: 'bank-products',
-            title: 'registration.steps.initialProducts.title',
-            description: 'registration.steps.initialProducts.description',
-          },
-          {
-            id: 'bank-branding',
-            title: 'registration.steps.branding.title',
-            description: 'registration.steps.branding.description',
-          },
-          this.reviewStep(),
-        ];
-
-      case 'broker':
-        return [
-          ...common,
-          {
-            id: 'broker-info',
-            title: 'registration.steps.brokerInfo.title',
-            description: 'registration.steps.brokerInfo.description',
-          },
-          {
-            id: 'broker-type',
-            title: 'registration.steps.brokerType.title',
-            description: 'registration.steps.brokerType.description',
-          },
-          {
-            id: 'broker-services',
-            title: 'registration.steps.services.title',
-            description: 'registration.steps.services.description',
-          },
-          {
-            id: 'broker-clients',
-            title: 'registration.steps.clientTypes.title',
-            description: 'registration.steps.clientTypes.description',
-          },
-          {
-            id: 'broker-partners',
-            title: 'registration.steps.initialPartners.title',
-            description: 'registration.steps.initialPartners.description',
-          },
-          this.reviewStep(),
-        ];
-
-      default:
-        return common;
-    }
-  });
-
-  readonly activeStep = computed(
-    () => this.steps()[this.currentStep()],
-  );
-
-  readonly isLastStep = computed(
-    () => this.currentStep() === this.steps().length - 1,
-  );
-
   setPurpose(purpose: RegistrationPurpose): void {
-    this.purpose.set(purpose);
+    this.registerBusiness.setPurpose(purpose);
   }
 
   next(): void {
@@ -488,7 +332,7 @@ export class Register {
     }
 
     if (!this.isLastStep()) {
-      this.currentStep.update(step => step + 1);
+      this.registerState.nextStep();
       return;
     }
 
@@ -496,15 +340,7 @@ export class Register {
   }
 
   previous(): void {
-    if (this.currentStep() > 0) {
-      this.currentStep.update(step => step - 1);
-    }
-  }
-
-  goToStep(index: number): void {
-    if (index < this.currentStep()) {
-      this.currentStep.set(index);
-    }
+    this.registerBusiness.previous();
   }
 
   toggleBank(
@@ -517,24 +353,19 @@ export class Register {
     const banks = control.value;
 
     control.setValue(
-      banks.includes(bankId)
-        ? banks.filter(id => id !== bankId)
-        : [...banks, bankId],
+      banks.includes(bankId) ? banks.filter(id => id !== bankId) : [...banks, bankId],
     );
   }
 
-  isBankSelected(
-    values: string[],
-    bankId: string,
-  ): boolean {
+  isBankSelected(values: string[], bankId: string): boolean {
     return values.includes(bankId);
   }
 
   private canContinue(): boolean {
     switch (this.activeStep()?.id) {
       case 'account':
-        this.accountForm.markAllAsTouched();
-        return this.accountForm.valid;
+        console.log(        this.stepperStateService.getStepValidity('account'));
+        return this.stepperStateService.getStepValidity('account');
 
       case 'purpose':
         return this.purpose() !== null;
@@ -576,14 +407,6 @@ export class Register {
     }
   }
 
-  private reviewStep(): RegistrationStep {
-    return {
-      id: 'review',
-      title: 'registration.steps.review.title',
-      description: 'registration.steps.review.description',
-    };
-  }
-
   private submit(): void {
     const payload = {
       account: this.accountForm.getRawValue(),
@@ -592,41 +415,41 @@ export class Register {
       personal:
         this.purpose() === 'personal'
           ? {
-            profile: this.personalForm.getRawValue(),
-            banks: this.personalBanksForm.getRawValue(),
-          }
+              profile: this.personalForm.getRawValue(),
+              banks: this.personalBanksForm.getRawValue(),
+            }
           : undefined,
 
       company:
         this.purpose() === 'company'
           ? {
-            info: this.companyInfoForm.getRawValue(),
-            profile: this.companyProfileForm.getRawValue(),
-            needs: this.companyNeedsForm.getRawValue(),
-            banking: this.companyBankingForm.getRawValue(),
-          }
+              info: this.companyInfoForm.getRawValue(),
+              profile: this.companyProfileForm.getRawValue(),
+              needs: this.companyNeedsForm.getRawValue(),
+              banking: this.companyBankingForm.getRawValue(),
+            }
           : undefined,
 
       bank:
         this.purpose() === 'bank'
           ? {
-            info: this.bankInfoForm.getRawValue(),
-            type: this.bankTypeForm.getRawValue(),
-            customers: this.bankCustomersForm.getRawValue(),
-            products: this.bankProductsForm.getRawValue(),
-            branding: this.bankBrandingForm.getRawValue(),
-          }
+              info: this.bankInfoForm.getRawValue(),
+              type: this.bankTypeForm.getRawValue(),
+              customers: this.bankCustomersForm.getRawValue(),
+              products: this.bankProductsForm.getRawValue(),
+              branding: this.bankBrandingForm.getRawValue(),
+            }
           : undefined,
 
       broker:
         this.purpose() === 'broker'
           ? {
-            info: this.brokerInfoForm.getRawValue(),
-            type: this.brokerTypeForm.getRawValue(),
-            services: this.brokerServicesForm.getRawValue(),
-            clients: this.brokerClientsForm.getRawValue(),
-            partners: this.brokerPartnersForm.getRawValue(),
-          }
+              info: this.brokerInfoForm.getRawValue(),
+              type: this.brokerTypeForm.getRawValue(),
+              services: this.brokerServicesForm.getRawValue(),
+              clients: this.brokerClientsForm.getRawValue(),
+              partners: this.brokerPartnersForm.getRawValue(),
+            }
           : undefined,
     };
 
